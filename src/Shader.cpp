@@ -1,0 +1,151 @@
+#include "Shader.hpp"
+
+#include <GL/glew.h>
+
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <glm/gtc/type_ptr.hpp>
+
+Shader::Shader(
+    const std::string& vertexPath,
+    const std::string& fragmentPath
+)
+{
+    std::string vertexSource = readFile(vertexPath);
+    std::string fragmentSource = readFile(fragmentPath);
+
+    unsigned int vertexShader = compileShader(
+        GL_VERTEX_SHADER,
+        vertexSource
+    );
+
+    unsigned int fragmentShader = compileShader(
+        GL_FRAGMENT_SHADER,
+        fragmentSource
+    );
+
+    shaderProgramId = glCreateProgram();
+
+    glAttachShader(shaderProgramId, vertexShader);
+    glAttachShader(shaderProgramId, fragmentShader);
+
+    glLinkProgram(shaderProgramId);
+
+    int success;
+
+    glGetProgramiv(
+        shaderProgramId,
+        GL_LINK_STATUS,
+        &success
+    );
+
+    if (!success)
+    {
+        char infoLog[512];
+
+        glGetProgramInfoLog(
+            shaderProgramId,
+            512,
+            nullptr,
+            infoLog
+        );
+
+        std::cerr << "Shader linking failed:\n"
+                  << infoLog << '\n';
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
+
+Shader::~Shader()
+{
+    glDeleteProgram(shaderProgramId);
+}
+
+void Shader::use() const
+{
+    glUseProgram(shaderProgramId);
+}
+
+unsigned int Shader::getId() const
+{
+    return shaderProgramId;
+}
+
+void Shader::setMat4(
+    const std::string& name,
+    const glm::mat4& matrix
+) const
+{
+    glUniformMatrix4fv(
+        glGetUniformLocation(
+            shaderProgramId,
+            name.c_str()
+        ),
+        1,
+        GL_FALSE,
+        glm::value_ptr(matrix)
+    );
+}
+
+std::string Shader::readFile(
+    const std::string& filePath
+)
+{
+    std::ifstream fileStream(filePath);
+
+    if (!fileStream.is_open())
+    {
+        throw std::runtime_error(
+            "Failed to open file: " + filePath
+        );
+    }
+
+    std::stringstream buffer;
+
+    buffer << fileStream.rdbuf();
+
+    return buffer.str();
+}
+
+unsigned int Shader::compileShader(
+    unsigned int shaderType,
+    const std::string& shaderSource
+)
+{
+    unsigned int shader = glCreateShader(shaderType);
+
+    const char* source = shaderSource.c_str();
+
+    glShaderSource(shader, 1, &source, nullptr);
+
+    glCompileShader(shader);
+
+    int success;
+
+    glGetShaderiv(
+        shader,
+        GL_COMPILE_STATUS,
+        &success
+    );
+
+    if (!success)
+    {
+        char infoLog[512];
+
+        glGetShaderInfoLog(
+            shader,
+            512,
+            nullptr,
+            infoLog
+        );
+
+        std::cerr << "Shader compilation failed:\n"
+                  << infoLog << '\n';
+    }
+
+    return shader;
+}
