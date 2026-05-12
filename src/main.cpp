@@ -11,23 +11,18 @@
 #include "Camera.hpp"
 #include "Shader.hpp"
 #include "Triangle.hpp"
+#include "Cube.hpp"
 
 GLFWwindow *globalWindow = nullptr;
 
 static Camera *globalCamera = nullptr;
 
-static void mouseCallback(
-    GLFWwindow *window,
-    double mouseX,
-    double mouseY)
+static void mouseCallback(GLFWwindow *window, double mouseX, double mouseY)
 {
-    globalCamera->processMouseInput(
-        mouseX,
-        mouseY);
+    globalCamera->processMouseInput(mouseX, mouseY);
 }
 
-static void processInput(
-    GLFWwindow *window)
+static void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -37,51 +32,30 @@ int main()
 {
     if (!glfwInit())
     {
-        std::cerr
-            << "Failed to initialize GLFW\n";
-
+        std::cerr << "Failed to initialize GLFW\n";
         return -1;
     }
 
-    glfwWindowHint(
-        GLFW_CONTEXT_VERSION_MAJOR,
-        3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    glfwWindowHint(
-        GLFW_CONTEXT_VERSION_MINOR,
-        3);
-
-    glfwWindowHint(
-        GLFW_OPENGL_PROFILE,
-        GLFW_OPENGL_CORE_PROFILE);
-
-    globalWindow = glfwCreateWindow(
-        1280,
-        720,
-        "FPS Camera",
-        nullptr,
-        nullptr);
+    globalWindow = glfwCreateWindow(1280, 720, "FPS Camera", nullptr, nullptr);
 
     if (globalWindow == nullptr)
     {
-        std::cerr
-            << "Failed to create GLFW window\n";
-
+        std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
-
         return -1;
     }
 
-    glfwMakeContextCurrent(
-        globalWindow);
+    glfwMakeContextCurrent(globalWindow);
 
     glewExperimental = GL_TRUE;
 
     if (glewInit() != GLEW_OK)
     {
-        std::cerr
-            << "Failed to initialize GLEW\n";
-
+        std::cerr << "Failed to initialize GLEW\n";
         return -1;
     }
 
@@ -89,92 +63,49 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader shader(
-        "shaders/basic.vert",
-        "shaders/basic.frag");
-
+    Shader shader("shaders/basic.vert", "shaders/basic.frag");
     Triangle triangle;
-
     Camera camera;
+    Cube cube;
 
     globalCamera = &camera;
 
-    glfwSetCursorPosCallback(
-        globalWindow,
-        mouseCallback);
+    glfwSetCursorPosCallback(globalWindow, mouseCallback);
 
-    glfwSetInputMode(
-        globalWindow,
-        GLFW_CURSOR,
-        GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(globalWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     float lastFrameTime = 0.0f;
 
     while (!glfwWindowShouldClose(globalWindow))
     {
-        float currentFrameTime =
-            static_cast<float>(
-                glfwGetTime());
-
-        float deltaTime =
-            currentFrameTime -
-            lastFrameTime;
-
-        lastFrameTime =
-            currentFrameTime;
-
+        float currentFrameTime = static_cast<float>(glfwGetTime());
+        float deltaTime = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
         processInput(globalWindow);
 
-        camera.processKeyboardInput(
-            deltaTime);
+        camera.processKeyboardInput(deltaTime);
 
-        glClearColor(
-            0.1f,
-            0.1f,
-            0.15f,
-            1.0f);
-
-        glClear(
-            GL_COLOR_BUFFER_BIT |
-            GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.use();
 
-        glm::mat4 model =
-            glm::mat4(1.0f);
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = camera.getViewMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        glm::mat4 view =
-            camera.getViewMatrix();
+        shader.setMat4("model", model);
+        shader.setMat4("view", view);
+        shader.setMat4("projection", projection);
 
-        glm::mat4 projection =
-            glm::perspective(
-                glm::radians(45.0f),
-                1280.0f / 720.0f,
-                0.1f,
-                100.0f);
+        cube.draw();
 
-        shader.setMat4(
-            "model",
-            model);
-
-        shader.setMat4(
-            "view",
-            view);
-
-        shader.setMat4(
-            "projection",
-            projection);
-
-        triangle.draw();
-
-        glfwSwapBuffers(
-            globalWindow);
+        glfwSwapBuffers(globalWindow);
 
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(
-        globalWindow);
+    glfwDestroyWindow(globalWindow);
 
     glfwTerminate();
 

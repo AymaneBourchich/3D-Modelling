@@ -7,14 +7,9 @@ class Camera
 public:
     Camera();
 
-    void processKeyboardInput(
-        float deltaTime
-    );
+    void processKeyboardInput(float deltaTime);
 
-    void processMouseInput(
-        double mouseX,
-        double mouseY
-    );
+    void processMouseInput(double mouseX, double mouseY);
 
     glm::mat4 getViewMatrix() const;
 

@@ -8,7 +8,8 @@ SRC := \
 	src/main.cpp \
 	src/Shader.cpp \
 	src/Triangle.cpp \
-	src/Camera.cpp
+	src/Camera.cpp \
+	src/Cube.cpp
 
 LIBS := -lglfw -lGLEW -lGL
 

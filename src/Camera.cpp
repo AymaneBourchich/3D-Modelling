@@ -4,27 +4,15 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-extern GLFWwindow* globalWindow;
+extern GLFWwindow *globalWindow;
 
 Camera::Camera()
 {
-    position = glm::vec3(
-        0.0f,
-        0.0f,
-        3.0f
-    );
+    position = glm::vec3(0.0f, 0.0f, 3.0f);
 
-    worldUp = glm::vec3(
-        0.0f,
-        1.0f,
-        0.0f
-    );
+    worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    front = glm::vec3(
-        0.0f,
-        0.0f,
-        -1.0f
-    );
+    front = glm::vec3(0.0f, 0.0f, -1.0f);
 
     yaw = -90.0f;
 
@@ -43,12 +31,9 @@ Camera::Camera()
 }
 
 void Camera::processKeyboardInput(
-    float deltaTime
-)
+    float deltaTime)
 {
-    float velocity =
-        movementSpeed *
-        deltaTime;
+    float velocity = movementSpeed * deltaTime;
 
     if (glfwGetKey(globalWindow, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -83,31 +68,22 @@ void Camera::processKeyboardInput(
 
 void Camera::processMouseInput(
     double mouseX,
-    double mouseY
-)
+    double mouseY)
 {
     if (firstMouse)
     {
         lastMouseX = static_cast<float>(mouseX);
-
         lastMouseY = static_cast<float>(mouseY);
-
         firstMouse = false;
     }
 
-    float xOffset =
-        static_cast<float>(mouseX) -
-        lastMouseX;
+    float xOffset = static_cast<float>(mouseX) - lastMouseX;
 
-    float yOffset =
-        lastMouseY -
-        static_cast<float>(mouseY);
+    float yOffset = lastMouseY - static_cast<float>(mouseY);
 
-    lastMouseX =
-        static_cast<float>(mouseX);
+    lastMouseX = static_cast<float>(mouseX);
 
-    lastMouseY =
-        static_cast<float>(mouseY);
+    lastMouseY = static_cast<float>(mouseY);
 
     xOffset *= mouseSensitivity;
 
@@ -134,33 +110,16 @@ void Camera::updateCameraVectors()
 {
     glm::vec3 direction;
 
-    direction.x =
-        cos(glm::radians(yaw)) *
-        cos(glm::radians(pitch));
-
-    direction.y =
-        sin(glm::radians(pitch));
-
-    direction.z =
-        sin(glm::radians(yaw)) *
-        cos(glm::radians(pitch));
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
     front = glm::normalize(direction);
-
-    right = glm::normalize(
-        glm::cross(front, worldUp)
-    );
-
-    up = glm::normalize(
-        glm::cross(right, front)
-    );
+    right = glm::normalize(glm::cross(front, worldUp));
+    up = glm::normalize(glm::cross(right, front));
 }
 
 glm::mat4 Camera::getViewMatrix() const
 {
-    return glm::lookAt(
-        position,
-        position + front,
-        up
-    );
+    return glm::lookAt(position, position + front, up);
 }
