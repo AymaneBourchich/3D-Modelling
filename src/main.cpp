@@ -64,8 +64,7 @@ int main()
 
     Shader shader("shaders/basic.vert", "shaders/basic.frag");
     Camera camera;
-    Shape cube(shader, CUBE_VERTICES, sizeof(CUBE_VERTICES), CUBE_INDICES, sizeof(CUBE_INDICES));
-    Shape triangle(shader, TRI_VERTCES, sizeof(TRI_VERTCES), TRI_INDICES, sizeof(TRI_INDICES));
+    Shape triangle(shader, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
 
     globalCamera = &camera;
 
@@ -98,12 +97,12 @@ int main()
         triangle.shader.setColor(Colors::cyan);
         triangle.draw();
 
-        cube.shader.use();
-        cube.shader.setModel(glm::translate(model, glm::vec3(1.0, 0.0, 0.0)));
-        cube.shader.setView(view);
-        cube.shader.setProj(projection);
-        cube.shader.setColor(Colors::navy);
-        cube.draw();
+        // cube.shader.use();
+        // cube.shader.setModel(glm::translate(model, glm::vec3(1.0, 0.0, 0.0)));
+        // cube.shader.setView(view);
+        // cube.shader.setProj(projection);
+        // cube.shader.setColor(Colors::navy);
+        // cube.draw();
 
         glfwSwapBuffers(globalWindow);
 

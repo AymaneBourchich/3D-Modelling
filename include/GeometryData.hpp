@@ -11,8 +11,7 @@ float CUBE_VERTICES[] =
         -0.5f, -0.5f, -0.5f,
         0.5f, -0.5f, -0.5f,
         0.5f, 0.5f, -0.5f,
-        -0.5f, 0.5f, -0.5f
-    };
+        -0.5f, 0.5f, -0.5f};
 
 unsigned int CUBE_INDICES[] =
     {
@@ -38,50 +37,49 @@ unsigned int CUBE_INDICES[] =
 
         // Bottom
         4, 5, 1,
-        1, 0, 4
-    };
+        1, 0, 4};
 
-const float TRI_VERTCES[] =
-    {
-        0.0f, 0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f
-    };
+namespace Triangle
+{
+    // {x, y, z}, {nx, ny, nz}, {u, v}, {r, g, b, a}
+    Vertex VERTICES[] =
+        {
+            {{0.0f, 0.5f, 0.0f}},
+            {{0.5f, -0.5f, 0.0f}},
+            {{-0.5f, -0.5f, 0.0f}}};
 
-const unsigned int TRI_INDICES[] =
-    {0, 1, 2};
+    const unsigned int INDICES[] =
+        {0, 1, 2};
+
+    const unsigned int VERTEX_COUNT = 3;
+    const unsigned int INDEX_COUNT = 3;
+
+}
 
 namespace Colors
 {
-    inline constexpr glm::vec4 white      = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    inline constexpr glm::vec4 black      = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    inline constexpr glm::vec4 white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    inline constexpr glm::vec4 black = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    inline constexpr glm::vec4 red        = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    inline constexpr glm::vec4 green      = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    inline constexpr glm::vec4 blue       = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    inline constexpr glm::vec4 red = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    inline constexpr glm::vec4 green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    inline constexpr glm::vec4 blue = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
-    inline constexpr glm::vec4 yellow     = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-    inline constexpr glm::vec4 cyan       = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
-    inline constexpr glm::vec4 magenta    = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+    inline constexpr glm::vec4 yellow = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    inline constexpr glm::vec4 cyan = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
+    inline constexpr glm::vec4 magenta = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 
-    inline constexpr glm::vec4 orange     = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
-    inline constexpr glm::vec4 purple     = glm::vec4(0.5f, 0.0f, 0.5f, 1.0f);
-    inline constexpr glm::vec4 pink       = glm::vec4(1.0f, 0.4f, 0.7f, 1.0f);
+    inline constexpr glm::vec4 orange = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+    inline constexpr glm::vec4 purple = glm::vec4(0.5f, 0.0f, 0.5f, 1.0f);
+    inline constexpr glm::vec4 pink = glm::vec4(1.0f, 0.4f, 0.7f, 1.0f);
 
-    inline constexpr glm::vec4 gray       = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-    inline constexpr glm::vec4 darkGray   = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
-    inline constexpr glm::vec4 lightGray  = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+    inline constexpr glm::vec4 gray = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+    inline constexpr glm::vec4 darkGray = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
+    inline constexpr glm::vec4 lightGray = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
 
-    inline constexpr glm::vec4 skyBlue    = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
-    inline constexpr glm::vec4 navy       = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+    inline constexpr glm::vec4 skyBlue = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
+    inline constexpr glm::vec4 navy = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
 
-    inline constexpr glm::vec4 lime       = glm::vec4(0.75f, 1.0f, 0.0f, 1.0f);
-    inline constexpr glm::vec4 teal       = glm::vec4(0.0f, 0.5f, 0.5f, 1.0f);
+    inline constexpr glm::vec4 lime = glm::vec4(0.75f, 1.0f, 0.0f, 1.0f);
+    inline constexpr glm::vec4 teal = glm::vec4(0.0f, 0.5f, 0.5f, 1.0f);
 }
-
-Vertex vertices[] =
-{
-    { {0.0f, 0.5f, 0.0f} },
-    { {0.5f, -0.5f, 0.0f} },
-    { {-0.5f, -0.5f, 0.0f} }
-};

@@ -3,11 +3,12 @@
 #pragma once
 
 #include "Shader.hpp"
+#include "Vertex.hpp"
 
 class Shape
 {
 public:
-    Shape(Shader &shader, const float *vertices, unsigned int vertexSize, const unsigned int *indices, unsigned int indexSize);
+    Shape(Shader &shader, const Vertex* vertices, unsigned int vertexSize, const unsigned int *indices, unsigned int indexSize);
 
     ~Shape();
 
