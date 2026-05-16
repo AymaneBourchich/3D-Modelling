@@ -12,8 +12,6 @@
 #include "Shape.hpp"
 #include "GeometryData.hpp"
 
-
-
 GLFWwindow *globalWindow = nullptr;
 
 static Camera *globalCamera = nullptr;
@@ -86,18 +84,25 @@ int main()
 
         camera.processKeyboardInput(deltaTime);
 
-        glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        cube.shader.use();
-        cube.shader.setMat4("model", model);
-        cube.shader.setMat4("view", view);
-        cube.shader.setMat4("projection", projection);
+        triangle.shader.use();
+        triangle.shader.setModel(model);
+        triangle.shader.setView(view);
+        triangle.shader.setProj(projection);
+        triangle.shader.setColor(Colors::cyan);
+        triangle.draw();
 
+        cube.shader.use();
+        cube.shader.setModel(glm::translate(model, glm::vec3(1.0, 0.0, 0.0)));
+        cube.shader.setView(view);
+        cube.shader.setProj(projection);
+        cube.shader.setColor(Colors::navy);
         cube.draw();
 
         glfwSwapBuffers(globalWindow);

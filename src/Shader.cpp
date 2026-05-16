@@ -63,9 +63,31 @@ unsigned int Shader::getId() const
     return shaderProgramId;
 }
 
+void Shader::setVec4(const std::string &name, const glm::vec4 &value) const
+{
+    glUniform4fv(glGetUniformLocation(shaderProgramId, name.c_str()), 1, glm::value_ptr(value));
+}
+
 void Shader::setMat4(const std::string &name, const glm::mat4 &matrix) const
 {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramId, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void Shader::setModel(const glm::mat4 &matrix) const
+{
+    setMat4("model", matrix);
+}
+void Shader::setView(const glm::mat4 &matrix) const
+{
+    setMat4("view", matrix);
+}
+void Shader::setProj(const glm::mat4 &matrix) const
+{
+    setMat4("projection", matrix);
+}
+void Shader::setColor(const glm::vec4 &value) const
+{
+    setVec4("color", value);
 }
 
 std::string Shader::readFile(const std::string &filePath)
