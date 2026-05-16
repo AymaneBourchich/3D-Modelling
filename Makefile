@@ -7,9 +7,8 @@ TARGET := app
 SRC := \
 	src/main.cpp \
 	src/Shader.cpp \
-	src/Triangle.cpp \
 	src/Camera.cpp \
-	src/Cube.cpp
+	src/Shape.cpp
 
 LIBS := -lglfw -lGLEW -lGL
 

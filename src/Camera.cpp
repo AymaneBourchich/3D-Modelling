@@ -20,7 +20,7 @@ Camera::Camera()
 
     movementSpeed = 3.0f;
 
-    mouseSensitivity = 0.1f;
+    mouseSensitivity = 0.01f;
 
     firstMouse = true;
 

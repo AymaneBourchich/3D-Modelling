@@ -7,11 +7,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
-
 #include "Camera.hpp"
 #include "Shader.hpp"
-#include "Triangle.hpp"
-#include "Cube.hpp"
+#include "Shape.hpp"
+#include "GeometryData.hpp"
+
+
 
 GLFWwindow *globalWindow = nullptr;
 
@@ -64,9 +65,9 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     Shader shader("shaders/basic.vert", "shaders/basic.frag");
-    Triangle triangle;
     Camera camera;
-    Cube cube;
+    Shape cube(shader, CUBE_VERTICES, sizeof(CUBE_VERTICES), CUBE_INDICES, sizeof(CUBE_INDICES));
+    Shape triangle(shader, TRI_VERTCES, sizeof(TRI_VERTCES), TRI_INDICES, sizeof(TRI_INDICES));
 
     globalCamera = &camera;
 
@@ -88,15 +89,14 @@ int main()
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        shader.use();
-
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        shader.setMat4("model", model);
-        shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
+        cube.shader.use();
+        cube.shader.setMat4("model", model);
+        cube.shader.setMat4("view", view);
+        cube.shader.setMat4("projection", projection);
 
         cube.draw();
 
