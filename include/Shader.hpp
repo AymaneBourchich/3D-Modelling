@@ -13,14 +13,16 @@ public:
     void use() const;
 
     void setMat4(const std::string &name, const glm::mat4 &matrix) const;
-    void setVec4(const std::string& name, const glm::vec4& value) const;
+    void setVec4(const std::string &name, const glm::vec4 &value) const;
 
     void setModel(const glm::mat4 &matrix) const;
     void setView(const glm::mat4 &matrix) const;
     void setProj(const glm::mat4 &matrix) const;
-    void setColor(const glm::vec4& value) const;
+    void setColor(const glm::vec4 &value) const;
 
-    void setInt(const std::string& name, int value) const;
+    void setRenderState(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj, const glm::vec4 &color) const;
+
+    void setInt(const std::string &name, int value) const;
 
     unsigned int getId() const;
 

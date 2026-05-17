@@ -29,53 +29,7 @@ namespace Colors
     inline constexpr glm::vec4 lime = glm::vec4(0.75f, 1.0f, 0.0f, 1.0f);
     inline constexpr glm::vec4 teal = glm::vec4(0.0f, 0.5f, 0.5f, 1.0f);
 }
-namespace Cube
-{
-    // 8 vertices, only position set (others use defaults from Vertex)
-    Vertex VERTICES[] =
-        {
-            // Front face
-            {vec3(-0.5f, -0.5f, 0.5f)},
-            {vec3(0.5f, -0.5f, 0.5f)},
-            {vec3(0.5f, 0.5f, 0.5f)},
-            {vec3(-0.5f, 0.5f, 0.5f)},
 
-            // Back face
-            {vec3(-0.5f, -0.5f, -0.5f)},
-            {vec3(0.5f, -0.5f, -0.5f)},
-            {vec3(0.5f, 0.5f, -0.5f)},
-            {vec3(-0.5f, 0.5f, -0.5f)}};
-
-    // 12 triangles (36 indices)
-    const unsigned int INDICES[] =
-        {
-            // Front
-            0, 1, 2,
-            2, 3, 0,
-
-            // Right
-            1, 5, 6,
-            6, 2, 1,
-
-            // Back
-            5, 4, 7,
-            7, 6, 5,
-
-            // Left
-            4, 0, 3,
-            3, 7, 4,
-
-            // Top
-            3, 2, 6,
-            6, 7, 3,
-
-            // Bottom
-            4, 5, 1,
-            1, 0, 4};
-
-    const unsigned int VERTEX_COUNT = 8;
-    const unsigned int INDEX_COUNT = 36;
-}
 
 namespace Triangle
 {
@@ -95,4 +49,81 @@ namespace Triangle
 
 }
 
+namespace Quad
+{
+    // {x, y, z}, {nx, ny, nz}, {u, v}, {r, g, b, a}
+    Vertex VERTICES[] =
+    {
+        {{-0.5f, -0.5f, 0.0f}, {}, {0.0f, 0.0f}, Colors::white},
+        {{ 0.5f, -0.5f, 0.0f}, {}, {1.0f, 0.0f}, Colors::white},
+        {{ 0.5f,  0.5f, 0.0f}, {}, {1.0f, 1.0f}, Colors::white},
+        {{-0.5f,  0.5f, 0.0f}, {}, {0.0f, 1.0f}, Colors::white}
+    };
+
+    const unsigned int INDICES[] =
+    {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    const unsigned int VERTEX_COUNT = 4;
+    const unsigned int INDEX_COUNT = 6;
+}
+namespace Cube
+{
+    // Each face is duplicated so normals are correct per face
+    // {x, y, z}, {nx, ny, nz}, {u, v}, {r, g, b, a}
+
+    Vertex VERTICES[] =
+    {
+        // Front (+Z)
+        {{-0.5f, -0.5f,  0.5f}, {0, 0, 1}, {0, 0}, Colors::white},
+        {{ 0.5f, -0.5f,  0.5f}, {0, 0, 1}, {1, 0}, Colors::white},
+        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1}, {1, 1}, Colors::white},
+        {{-0.5f,  0.5f,  0.5f}, {0, 0, 1}, {0, 1}, Colors::white},
+
+        // Back (-Z)
+        {{ 0.5f, -0.5f, -0.5f}, {0, 0, -1}, {0, 0}, Colors::white},
+        {{-0.5f, -0.5f, -0.5f}, {0, 0, -1}, {1, 0}, Colors::white},
+        {{-0.5f,  0.5f, -0.5f}, {0, 0, -1}, {1, 1}, Colors::white},
+        {{ 0.5f,  0.5f, -0.5f}, {0, 0, -1}, {0, 1}, Colors::white},
+
+        // Left (-X)
+        {{-0.5f, -0.5f, -0.5f}, {-1, 0, 0}, {0, 0}, Colors::white},
+        {{-0.5f, -0.5f,  0.5f}, {-1, 0, 0}, {1, 0}, Colors::white},
+        {{-0.5f,  0.5f,  0.5f}, {-1, 0, 0}, {1, 1}, Colors::white},
+        {{-0.5f,  0.5f, -0.5f}, {-1, 0, 0}, {0, 1}, Colors::white},
+
+        // Right (+X)
+        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 0}, {0, 0}, Colors::white},
+        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 0}, {1, 0}, Colors::white},
+        {{ 0.5f,  0.5f, -0.5f}, {1, 0, 0}, {1, 1}, Colors::white},
+        {{ 0.5f,  0.5f,  0.5f}, {1, 0, 0}, {0, 1}, Colors::white},
+
+        // Top (+Y)
+        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0}, {0, 0}, Colors::white},
+        {{ 0.5f,  0.5f,  0.5f}, {0, 1, 0}, {1, 0}, Colors::white},
+        {{ 0.5f,  0.5f, -0.5f}, {0, 1, 0}, {1, 1}, Colors::white},
+        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0}, {0, 1}, Colors::white},
+
+        // Bottom (-Y)
+        {{-0.5f, -0.5f, -0.5f}, {0, -1, 0}, {0, 0}, Colors::white},
+        {{ 0.5f, -0.5f, -0.5f}, {0, -1, 0}, {1, 0}, Colors::white},
+        {{ 0.5f, -0.5f,  0.5f}, {0, -1, 0}, {1, 1}, Colors::white},
+        {{-0.5f, -0.5f,  0.5f}, {0, -1, 0}, {0, 1}, Colors::white},
+    };
+
+    const unsigned int INDICES[] =
+    {
+        0, 1, 2, 2, 3, 0,
+        4, 5, 6, 6, 7, 4,
+        8, 9, 10, 10, 11, 8,
+        12, 13, 14, 14, 15, 12,
+        16, 17, 18, 18, 19, 16,
+        20, 21, 22, 22, 23, 20
+    };
+
+    const unsigned int VERTEX_COUNT = 24;
+    const unsigned int INDEX_COUNT = 36;
+}
 

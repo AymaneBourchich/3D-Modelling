@@ -89,8 +89,15 @@ void Shader::setColor(const glm::vec4 &value) const
 {
     setVec4("color", value);
 }
+void Shader::setRenderState(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj, const glm::vec4 &color) const
+{
+    setModel(model);
+    setView(view);
+    setProj(proj);
+    setColor(color);
+}
 
-void Shader::setInt(const std::string& name, int value) const
+void Shader::setInt(const std::string &name, int value) const
 {
     glUniform1i(glGetUniformLocation(shaderProgramId, name.c_str()), value);
 }
