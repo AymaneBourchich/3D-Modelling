@@ -90,6 +90,11 @@ void Shader::setColor(const glm::vec4 &value) const
     setVec4("color", value);
 }
 
+void Shader::setInt(const std::string& name, int value) const
+{
+    glUniform1i(glGetUniformLocation(shaderProgramId, name.c_str()), value);
+}
+
 std::string Shader::readFile(const std::string &filePath)
 {
     std::ifstream fileStream(filePath);

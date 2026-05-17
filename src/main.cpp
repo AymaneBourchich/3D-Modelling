@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include "Camera.hpp"
+#include "Texture.hpp"
 #include "Shader.hpp"
 #include "Shape.hpp"
 #include "GeometryData.hpp"
@@ -62,9 +63,13 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader shader("shaders/basic.vert", "shaders/basic.frag");
+    //Shader shader("shaders/basic.vert", "shaders/basic.frag");
+    Shader shader("shaders/texture.vert", "shaders/texture.frag");
+
     Camera camera;
+    Texture texture("textures/hex.jpg");
     Shape triangle(shader, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
+    Shape cube(shader, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     globalCamera = &camera;
 
@@ -90,19 +95,20 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
+
+        
+
         triangle.shader.use();
+        glActiveTexture(GL_TEXTURE0);
+
+        texture.bind();
+
+        shader.setInt("texture0", 0);
         triangle.shader.setModel(model);
         triangle.shader.setView(view);
         triangle.shader.setProj(projection);
-        triangle.shader.setColor(Colors::cyan);
+        triangle.shader.setColor(Colors::red);
         triangle.draw();
-
-        // cube.shader.use();
-        // cube.shader.setModel(glm::translate(model, glm::vec3(1.0, 0.0, 0.0)));
-        // cube.shader.setView(view);
-        // cube.shader.setProj(projection);
-        // cube.shader.setColor(Colors::navy);
-        // cube.draw();
 
         glfwSwapBuffers(globalWindow);
 

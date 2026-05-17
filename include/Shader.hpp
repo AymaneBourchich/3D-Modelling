@@ -20,6 +20,8 @@ public:
     void setProj(const glm::mat4 &matrix) const;
     void setColor(const glm::vec4& value) const;
 
+    void setInt(const std::string& name, int value) const;
+
     unsigned int getId() const;
 
 private:

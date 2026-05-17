@@ -8,7 +8,8 @@ SRC := \
 	src/main.cpp \
 	src/Shader.cpp \
 	src/Camera.cpp \
-	src/Shape.cpp
+	src/Shape.cpp \
+	src/Texture.cpp
 
 LIBS := -lglfw -lGLEW -lGL
 
