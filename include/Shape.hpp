@@ -19,5 +19,6 @@ public:
 private:
     unsigned int vao, vbo, ebo;
     unsigned int indexCount;
+    
 };
 
