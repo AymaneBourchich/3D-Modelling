@@ -12,22 +12,67 @@
 #include "Shader.hpp"
 #include "Shape.hpp"
 #include "GeometryData.hpp"
+#include <vector>
 
 GLFWwindow *globalWindow = nullptr;
-
 static Camera *globalCamera = nullptr;
-
 static void mouseCallback(GLFWwindow *window, double mouseX, double mouseY)
 {
     globalCamera->processMouseInput(mouseX, mouseY);
 }
-
 static void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
+inline void generateSphere(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, float radius, int stacks, int sectors)
+{
+    vertices.clear();
+    indices.clear();
+
+    float pi = 3.1415926f;
+
+    for (int i = 0; i <= stacks; i++)
+    {
+        float v = pi * i / stacks;
+        float y = cos(v);
+        float r = sin(v);
+
+        for (int j = 0; j <= sectors; j++)
+        {
+            float u = 2.0f * pi * j / sectors;
+
+            float x = cos(u) * r;
+            float z = sin(u) * r;
+
+            Vertex vertex;
+            vertex.position = glm::vec3(x, y, z) * radius;
+            vertex.normal = glm::vec3(x, y, z);
+            vertex.texCoord = glm::vec2((float)j / sectors, (float)i / stacks);
+            vertex.color = Colors::white;
+
+            vertices.push_back(vertex);
+        }
+    }
+
+    for (int i = 0; i < stacks; i++)
+    {
+        for (int j = 0; j < sectors; j++)
+        {
+            int first = i * (sectors + 1) + j;
+            int second = first + sectors + 1;
+
+            indices.push_back(first);
+            indices.push_back(second);
+            indices.push_back(first + 1);
+
+            indices.push_back(second);
+            indices.push_back(second + 1);
+            indices.push_back(first + 1);
+        }
+    }
+}
 int main()
 {
     if (!glfwInit())
@@ -65,6 +110,16 @@ int main()
 
     // Shader shader("shaders/basic.vert", "shaders/basic.frag");
     Shader shader("shaders/texture.vert", "shaders/texture.frag");
+    std::vector<Vertex> sphereVertices;
+    std::vector<unsigned int> sphereIndices;
+
+    generateSphere(sphereVertices, sphereIndices, 1.0f, 32, 32);
+
+    Shape sphere(shader,
+                 sphereVertices.data(),
+                 sphereVertices.size(),
+                 sphereIndices.data(),
+                 sphereIndices.size());
 
     Camera camera;
     Texture texture("textures/hex.jpg");
@@ -101,14 +156,14 @@ int main()
         model = glm::rotate(model, time, glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, time * 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-        triangle.shader.use();
+        shader.use();
         glActiveTexture(GL_TEXTURE0);
 
         texture.bind();
 
         shader.setInt("texture0", 0);
-        cube.shader.setRenderState(model, view, proj, Colors::red);
-        cube.draw();
+        sphere.shader.setRenderState(model, view, proj, Colors::red);
+        sphere.draw();
 
 
 
