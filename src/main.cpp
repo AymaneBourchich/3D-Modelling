@@ -122,7 +122,7 @@ int main()
                  sphereIndices.size());
 
     Camera camera;
-    Texture texture("textures/hex.jpg");
+    Texture textureFloor("textures/floor.jpg");
     Shape triangle(shader, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape quad(shader, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape cube(shader, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
@@ -137,9 +137,9 @@ int main()
 
     while (!glfwWindowShouldClose(globalWindow))
     {
-        float currentFrameTime = static_cast<float>(glfwGetTime());
-        float deltaTime = currentFrameTime - lastFrameTime;
-        lastFrameTime = currentFrameTime;
+        float currentTime = glfwGetTime();
+        float deltaTime = currentTime - lastFrameTime;
+        lastFrameTime = currentTime;
         processInput(globalWindow);
 
         camera.processKeyboardInput(deltaTime);
@@ -150,25 +150,20 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        float time = static_cast<float>(glfwGetTime());
-
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, time, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, time * 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(50.0f, 50.0f, 50.0f));
+
 
         shader.use();
-        glActiveTexture(GL_TEXTURE0);
-
-        texture.bind();
-
+        textureFloor.bind();
         shader.setInt("texture0", 0);
-        sphere.shader.setRenderState(model, view, proj, Colors::red);
-        sphere.draw();
-
-
+        glActiveTexture(GL_TEXTURE0);
+        shader.setRenderState(model, view, proj, Colors::cyan);
+        quad.draw();
 
         glfwSwapBuffers(globalWindow);
-
         glfwPollEvents();
     }
 
