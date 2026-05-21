@@ -14,6 +14,21 @@
 #include "GeometryData.hpp"
 #include <vector>
 
+void translate(glm::mat4 &model, glm::vec3 value)
+{
+    model = glm::translate(model, value);
+}
+
+void rotate(glm::mat4 &model, float angle, glm::vec3 axis)
+{
+    model = glm::rotate(model, angle, axis);
+}
+
+void scale(glm::mat4 &model, glm::vec3 value)
+{
+    model = glm::scale(model, value);
+}
+
 GLFWwindow *globalWindow = nullptr;
 static Camera *globalCamera = nullptr;
 static void mouseCallback(GLFWwindow *window, double mouseX, double mouseY)
@@ -129,22 +144,21 @@ int main()
 
         //-----------DRAWING FLOOR------------------/
         glm::mat4 floorModel = IDENTITY;
-        floorModel = glm::translate(floorModel, glm::vec3(-1.0f, -2.0f, 0.0f));
-        floorModel = glm::rotate(floorModel, glm::radians(90.0f), X_AXIS);
-        floorModel = glm::scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
+        rotate(floorModel, glm::radians(90.0f), X_AXIS);
+        scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
 
         floor.shader.use();
+        floor.shader.setRenderState(floorModel, view, proj);
         texHex.bind();
         floor.shader.setInt("texture0", 0);
         glActiveTexture(GL_TEXTURE0);
-        floor.shader.setRenderState(floorModel, view, proj);
         floor.draw();
 
         //---------------------------------------------/
 
         glm::mat4 lanternModel = IDENTITY;
-        lanternModel = glm::translate(lanternModel, glm::vec3(-3.0f, 1.0f, -3.0f));
-        lanternModel = glm::rotate(lanternModel, 2 * currentTime, -X_AXIS + Y_AXIS);
+        translate(lanternModel, glm::vec3(-3.0f, 2.5f, -3.0f));
+        rotate(lanternModel, 2 * currentTime, -X_AXIS + Y_AXIS);
         lantern.shader.use();
         lantern.shader.setRenderState(lanternModel, view, proj, Colors::red);
         lantern.draw();
@@ -152,14 +166,14 @@ int main()
         //-------------------------------------------------//
 
         glm::mat4 stickModel = IDENTITY;
-        stickModel = glm::translate(stickModel, 5 * sinf(currentTime) * X_AXIS);
-        stickModel = glm::translate(stickModel, glm::vec3(0.0f, 0.25f, -0.5f));
-        stickModel = glm::rotate(stickModel, 5 * currentTime, Y_AXIS);
-        stickModel = glm::rotate(stickModel, glm::radians(90.0f), X_AXIS);
-        stickModel = glm::scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
+        translate(stickModel, glm::vec3(0.0f, 1.25f, -0.5f));
+        rotate(stickModel, 3 * currentTime, Z_AXIS);
+        scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
         stick.shader.use();
         stick.shader.setRenderState(stickModel, view, proj, Colors::darkGray);
         stick.draw();
+
+
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
