@@ -75,71 +75,48 @@ inline void generateSphere(std::vector<Vertex> &vertices, std::vector<unsigned i
 }
 int main()
 {
-    if (!glfwInit())
-    {
-        std::cerr << "Failed to initialize GLFW\n";
-        return -1;
-    }
-
+    glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     globalWindow = glfwCreateWindow(1280, 720, "FPS Camera", nullptr, nullptr);
-
-    if (globalWindow == nullptr)
-    {
-        std::cerr << "Failed to create GLFW window\n";
-        glfwTerminate();
-        return -1;
-    }
-
     glfwMakeContextCurrent(globalWindow);
-
     glewExperimental = GL_TRUE;
-
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "Failed to initialize GLEW\n";
-        return -1;
-    }
-
+    glewInit();
     glViewport(0, 0, 1280, 720);
 
     glEnable(GL_DEPTH_TEST);
 
-    // Shader shader("shaders/basic.vert", "shaders/basic.frag");
-    Shader shader("shaders/texture.vert", "shaders/texture.frag");
-    std::vector<Vertex> sphereVertices;
-    std::vector<unsigned int> sphereIndices;
-
-    generateSphere(sphereVertices, sphereIndices, 1.0f, 32, 32);
-
-    Shape sphere(shader,
-                 sphereVertices.data(),
-                 sphereVertices.size(),
-                 sphereIndices.data(),
-                 sphereIndices.size());
-
     Camera camera;
-    Texture textureFloor("textures/floor.jpg");
-    Shape triangle(shader, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
-    Shape quad(shader, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape cube(shader, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
-
     globalCamera = &camera;
 
-    glfwSetCursorPosCallback(globalWindow, mouseCallback);
+    Shader shaderBasic("shaders/basic.vert", "shaders/basic.frag");
+    Shader shaderTex("shaders/texture.vert", "shaders/texture.frag");
 
+    Texture texFloor("textures/floor.jpg");
+    Texture texHex("textures/hex.jpg");
+    Texture texNebula("textures/nebula.jpg");
+
+    std::vector<Vertex> sphereVertices;
+    std::vector<unsigned int> sphereIndices;
+    generateSphere(sphereVertices, sphereIndices, 1.0f, 32, 32);
+
+    Shape sphere(shaderTex, sphereVertices.data(), sphereVertices.size(), sphereIndices.data(), sphereIndices.size());
+    Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
+    Shape floor(shaderTex, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
+    Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
+    Shape lantern(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+
+    glfwSetCursorPosCallback(globalWindow, mouseCallback);
     glfwSetInputMode(globalWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    float lastFrameTime = 0.0f;
+    float prevTime = 0.0f;
 
     while (!glfwWindowShouldClose(globalWindow))
     {
         float currentTime = glfwGetTime();
-        float deltaTime = currentTime - lastFrameTime;
-        lastFrameTime = currentTime;
+        float deltaTime = currentTime - prevTime;
+        prevTime = currentTime;
         processInput(globalWindow);
 
         camera.processKeyboardInput(deltaTime);
@@ -150,18 +127,39 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(50.0f, 50.0f, 50.0f));
+        //-----------DRAWING FLOOR------------------/
+        glm::mat4 floorModel = IDENTITY;
+        floorModel = glm::translate(floorModel, glm::vec3(-1.0f, -2.0f, 0.0f));
+        floorModel = glm::rotate(floorModel, glm::radians(90.0f), X_AXIS);
+        floorModel = glm::scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
 
-
-        shader.use();
-        textureFloor.bind();
-        shader.setInt("texture0", 0);
+        floor.shader.use();
+        texHex.bind();
+        floor.shader.setInt("texture0", 0);
         glActiveTexture(GL_TEXTURE0);
-        shader.setRenderState(model, view, proj, Colors::cyan);
-        quad.draw();
+        floor.shader.setRenderState(floorModel, view, proj);
+        floor.draw();
+
+        //---------------------------------------------/
+
+        glm::mat4 lanternModel = IDENTITY;
+        lanternModel = glm::translate(lanternModel, glm::vec3(-3.0f, 1.0f, -3.0f));
+        lanternModel = glm::rotate(lanternModel, 2 * currentTime, -X_AXIS + Y_AXIS);
+        lantern.shader.use();
+        lantern.shader.setRenderState(lanternModel, view, proj, Colors::red);
+        lantern.draw();
+
+        //-------------------------------------------------//
+
+        glm::mat4 stickModel = IDENTITY;
+        stickModel = glm::translate(stickModel, 5 * sinf(currentTime) * X_AXIS);
+        stickModel = glm::translate(stickModel, glm::vec3(0.0f, 0.25f, -0.5f));
+        stickModel = glm::rotate(stickModel, 5 * currentTime, Y_AXIS);
+        stickModel = glm::rotate(stickModel, glm::radians(90.0f), X_AXIS);
+        stickModel = glm::scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
+        stick.shader.use();
+        stick.shader.setRenderState(stickModel, view, proj, Colors::darkGray);
+        stick.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

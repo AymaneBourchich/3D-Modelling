@@ -8,8 +8,5 @@ out vec4 finalColor;
 
 void main()
 {
-    if (fragmentColor.a == 0.0)
-        finalColor = color;
-    else
-        finalColor = fragmentColor;
+    finalColor = color;
 }

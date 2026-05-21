@@ -1,7 +1,10 @@
 #include "Vertex.hpp"
-typedef glm::vec3 vec3;
-typedef glm::vec2 vec2;
-typedef glm::vec4 vec4;
+
+glm::vec3 X_AXIS = glm::vec3(1.0f, 0.0f, 0.0f);
+glm::vec3 Y_AXIS = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::vec3 Z_AXIS = glm::vec3(0.0f, 0.0f, 1.0f);
+
+glm::mat4 IDENTITY = glm::mat4(1.0f);
 namespace Colors
 {
     inline constexpr glm::vec4 white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -30,16 +33,15 @@ namespace Colors
     inline constexpr glm::vec4 teal = glm::vec4(0.0f, 0.5f, 0.5f, 1.0f);
 }
 
-
 namespace Triangle
 {
     // {x, y, z}, {nx, ny, nz}, {u, v}, {r, g, b, a}
     Vertex VERTICES[] =
-{
-    {{-0.5f, -0.5f, 0.0f}, {}, {0.0f, 0.0f}, Colors::white},
-    {{ 0.5f, -0.5f, 0.0f}, {}, {1.0f, 0.0f}, Colors::white},
-    {{ 0.5f,  0.5f, 0.0f}, {}, {1.0f, 1.0f}, Colors::white},
-};
+        {
+            {{-0.5f, -0.5f, 0.0f}, {}, {0.0f, 0.0f}, Colors::white},
+            {{0.5f, -0.5f, 0.0f}, {}, {1.0f, 0.0f}, Colors::white},
+            {{0.5f, 0.5f, 0.0f}, {}, {1.0f, 1.0f}, Colors::white},
+    };
 
     const unsigned int INDICES[] =
         {0, 1, 2};
@@ -53,18 +55,16 @@ namespace Quad
 {
     // {x, y, z}, {nx, ny, nz}, {u, v}, {r, g, b, a}
     Vertex VERTICES[] =
-    {
-        {{-0.5f, -0.5f, 0.0f}, {}, {0.0f, 0.0f}, Colors::white},
-        {{ 0.5f, -0.5f, 0.0f}, {}, {1.0f, 0.0f}, Colors::white},
-        {{ 0.5f,  0.5f, 0.0f}, {}, {1.0f, 1.0f}, Colors::white},
-        {{-0.5f,  0.5f, 0.0f}, {}, {0.0f, 1.0f}, Colors::white}
-    };
+        {
+            {{-0.5f, -0.5f, 0.0f}, {}, {0.0f, 0.0f}, Colors::white},
+            {{0.5f, -0.5f, 0.0f}, {}, {1.0f, 0.0f}, Colors::white},
+            {{0.5f, 0.5f, 0.0f}, {}, {1.0f, 1.0f}, Colors::white},
+            {{-0.5f, 0.5f, 0.0f}, {}, {0.0f, 1.0f}, Colors::white}};
 
     const unsigned int INDICES[] =
-    {
-        0, 1, 2,
-        2, 3, 0
-    };
+        {
+            0, 1, 2,
+            2, 3, 0};
 
     const unsigned int VERTEX_COUNT = 4;
     const unsigned int INDEX_COUNT = 6;
@@ -75,99 +75,97 @@ namespace Cube
     // {x, y, z}, {nx, ny, nz}, {u, v}, {r, g, b, a}
 
     Vertex VERTICES[] =
-    {
-        // Front (+Z)
-        {{-0.5f, -0.5f,  0.5f}, {0, 0, 1}, {0, 0}, Colors::white},
-        {{ 0.5f, -0.5f,  0.5f}, {0, 0, 1}, {1, 0}, Colors::white},
-        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1}, {1, 1}, Colors::white},
-        {{-0.5f,  0.5f,  0.5f}, {0, 0, 1}, {0, 1}, Colors::white},
+        {
+            // Front (+Z)
+            {{-0.5f, -0.5f, 0.5f}, {0, 0, 1}, {0, 0}, Colors::white},
+            {{0.5f, -0.5f, 0.5f}, {0, 0, 1}, {1, 0}, Colors::white},
+            {{0.5f, 0.5f, 0.5f}, {0, 0, 1}, {1, 1}, Colors::white},
+            {{-0.5f, 0.5f, 0.5f}, {0, 0, 1}, {0, 1}, Colors::white},
 
-        // Back (-Z)
-        {{ 0.5f, -0.5f, -0.5f}, {0, 0, -1}, {0, 0}, Colors::white},
-        {{-0.5f, -0.5f, -0.5f}, {0, 0, -1}, {1, 0}, Colors::white},
-        {{-0.5f,  0.5f, -0.5f}, {0, 0, -1}, {1, 1}, Colors::white},
-        {{ 0.5f,  0.5f, -0.5f}, {0, 0, -1}, {0, 1}, Colors::white},
+            // Back (-Z)
+            {{0.5f, -0.5f, -0.5f}, {0, 0, -1}, {0, 0}, Colors::white},
+            {{-0.5f, -0.5f, -0.5f}, {0, 0, -1}, {1, 0}, Colors::white},
+            {{-0.5f, 0.5f, -0.5f}, {0, 0, -1}, {1, 1}, Colors::white},
+            {{0.5f, 0.5f, -0.5f}, {0, 0, -1}, {0, 1}, Colors::white},
 
-        // Left (-X)
-        {{-0.5f, -0.5f, -0.5f}, {-1, 0, 0}, {0, 0}, Colors::white},
-        {{-0.5f, -0.5f,  0.5f}, {-1, 0, 0}, {1, 0}, Colors::white},
-        {{-0.5f,  0.5f,  0.5f}, {-1, 0, 0}, {1, 1}, Colors::white},
-        {{-0.5f,  0.5f, -0.5f}, {-1, 0, 0}, {0, 1}, Colors::white},
+            // Left (-X)
+            {{-0.5f, -0.5f, -0.5f}, {-1, 0, 0}, {0, 0}, Colors::white},
+            {{-0.5f, -0.5f, 0.5f}, {-1, 0, 0}, {1, 0}, Colors::white},
+            {{-0.5f, 0.5f, 0.5f}, {-1, 0, 0}, {1, 1}, Colors::white},
+            {{-0.5f, 0.5f, -0.5f}, {-1, 0, 0}, {0, 1}, Colors::white},
 
-        // Right (+X)
-        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 0}, {0, 0}, Colors::white},
-        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 0}, {1, 0}, Colors::white},
-        {{ 0.5f,  0.5f, -0.5f}, {1, 0, 0}, {1, 1}, Colors::white},
-        {{ 0.5f,  0.5f,  0.5f}, {1, 0, 0}, {0, 1}, Colors::white},
+            // Right (+X)
+            {{0.5f, -0.5f, 0.5f}, {1, 0, 0}, {0, 0}, Colors::white},
+            {{0.5f, -0.5f, -0.5f}, {1, 0, 0}, {1, 0}, Colors::white},
+            {{0.5f, 0.5f, -0.5f}, {1, 0, 0}, {1, 1}, Colors::white},
+            {{0.5f, 0.5f, 0.5f}, {1, 0, 0}, {0, 1}, Colors::white},
 
-        // Top (+Y)
-        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0}, {0, 0}, Colors::white},
-        {{ 0.5f,  0.5f,  0.5f}, {0, 1, 0}, {1, 0}, Colors::white},
-        {{ 0.5f,  0.5f, -0.5f}, {0, 1, 0}, {1, 1}, Colors::white},
-        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0}, {0, 1}, Colors::white},
+            // Top (+Y)
+            {{-0.5f, 0.5f, 0.5f}, {0, 1, 0}, {0, 0}, Colors::white},
+            {{0.5f, 0.5f, 0.5f}, {0, 1, 0}, {1, 0}, Colors::white},
+            {{0.5f, 0.5f, -0.5f}, {0, 1, 0}, {1, 1}, Colors::white},
+            {{-0.5f, 0.5f, -0.5f}, {0, 1, 0}, {0, 1}, Colors::white},
 
-        // Bottom (-Y)
-        {{-0.5f, -0.5f, -0.5f}, {0, -1, 0}, {0, 0}, Colors::white},
-        {{ 0.5f, -0.5f, -0.5f}, {0, -1, 0}, {1, 0}, Colors::white},
-        {{ 0.5f, -0.5f,  0.5f}, {0, -1, 0}, {1, 1}, Colors::white},
-        {{-0.5f, -0.5f,  0.5f}, {0, -1, 0}, {0, 1}, Colors::white},
+            // Bottom (-Y)
+            {{-0.5f, -0.5f, -0.5f}, {0, -1, 0}, {0, 0}, Colors::white},
+            {{0.5f, -0.5f, -0.5f}, {0, -1, 0}, {1, 0}, Colors::white},
+            {{0.5f, -0.5f, 0.5f}, {0, -1, 0}, {1, 1}, Colors::white},
+            {{-0.5f, -0.5f, 0.5f}, {0, -1, 0}, {0, 1}, Colors::white},
     };
 
     const unsigned int INDICES[] =
-    {
-        0, 1, 2, 2, 3, 0,
-        4, 5, 6, 6, 7, 4,
-        8, 9, 10, 10, 11, 8,
-        12, 13, 14, 14, 15, 12,
-        16, 17, 18, 18, 19, 16,
-        20, 21, 22, 22, 23, 20
-    };
+        {
+            0, 1, 2, 2, 3, 0,
+            4, 5, 6, 6, 7, 4,
+            8, 9, 10, 10, 11, 8,
+            12, 13, 14, 14, 15, 12,
+            16, 17, 18, 18, 19, 16,
+            20, 21, 22, 22, 23, 20};
 
     const unsigned int VERTEX_COUNT = 24;
     const unsigned int INDEX_COUNT = 36;
 }
 
 float skyboxVertices[] =
-{
-    -1,  1, -1,
-    -1, -1, -1,
-     1, -1, -1,
-     1, -1, -1,
-     1,  1, -1,
-    -1,  1, -1,
+    {
+        -1, 1, -1,
+        -1, -1, -1,
+        1, -1, -1,
+        1, -1, -1,
+        1, 1, -1,
+        -1, 1, -1,
 
-    -1, -1,  1,
-    -1, -1, -1,
-    -1,  1, -1,
-    -1,  1, -1,
-    -1,  1,  1,
-    -1, -1,  1,
+        -1, -1, 1,
+        -1, -1, -1,
+        -1, 1, -1,
+        -1, 1, -1,
+        -1, 1, 1,
+        -1, -1, 1,
 
-     1, -1, -1,
-     1, -1,  1,
-     1,  1,  1,
-     1,  1,  1,
-     1,  1, -1,
-     1, -1, -1,
+        1, -1, -1,
+        1, -1, 1,
+        1, 1, 1,
+        1, 1, 1,
+        1, 1, -1,
+        1, -1, -1,
 
-    -1, -1,  1,
-    -1,  1,  1,
-     1,  1,  1,
-     1,  1,  1,
-     1, -1,  1,
-    -1, -1,  1,
+        -1, -1, 1,
+        -1, 1, 1,
+        1, 1, 1,
+        1, 1, 1,
+        1, -1, 1,
+        -1, -1, 1,
 
-    -1,  1, -1,
-     1,  1, -1,
-     1,  1,  1,
-     1,  1,  1,
-    -1,  1,  1,
-    -1,  1, -1,
+        -1, 1, -1,
+        1, 1, -1,
+        1, 1, 1,
+        1, 1, 1,
+        -1, 1, 1,
+        -1, 1, -1,
 
-    -1, -1, -1,
-    -1, -1,  1,
-     1, -1, -1,
-     1, -1, -1,
-    -1, -1,  1,
-     1, -1,  1
-};
+        -1, -1, -1,
+        -1, -1, 1,
+        1, -1, -1,
+        1, -1, -1,
+        -1, -1, 1,
+        1, -1, 1};
