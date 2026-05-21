@@ -24,6 +24,13 @@ void rotate(glm::mat4 &model, float angle, glm::vec3 axis)
     model = glm::rotate(model, angle, axis);
 }
 
+void rotateAroundPivot(glm::mat4 &model, float angle, glm::vec3 axis, glm::vec3 pivot)
+{
+    translate(model, -pivot);
+    rotate(model, angle, axis);
+    translate(model, pivot);
+}
+
 void scale(glm::mat4 &model, glm::vec3 value)
 {
     model = glm::scale(model, value);
@@ -120,6 +127,7 @@ int main()
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape floor(shaderTex, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
+    Shape quad(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape lantern(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     glfwSetCursorPosCallback(globalWindow, mouseCallback);
@@ -147,21 +155,19 @@ int main()
         rotate(floorModel, glm::radians(90.0f), X_AXIS);
         scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
 
-        floor.shader.use();
         floor.shader.setRenderState(floorModel, view, proj);
         texHex.bind();
         floor.shader.setInt("texture0", 0);
         glActiveTexture(GL_TEXTURE0);
-        floor.draw();
+        // floor.draw();
 
         //---------------------------------------------/
 
         glm::mat4 lanternModel = IDENTITY;
         translate(lanternModel, glm::vec3(-3.0f, 2.5f, -3.0f));
         rotate(lanternModel, 2 * currentTime, -X_AXIS + Y_AXIS);
-        lantern.shader.use();
         lantern.shader.setRenderState(lanternModel, view, proj, Colors::red);
-        lantern.draw();
+        // lantern.draw();
 
         //-------------------------------------------------//
 
@@ -169,11 +175,19 @@ int main()
         translate(stickModel, glm::vec3(0.0f, 1.25f, -0.5f));
         rotate(stickModel, 3 * currentTime, Z_AXIS);
         scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
-        stick.shader.use();
         stick.shader.setRenderState(stickModel, view, proj, Colors::darkGray);
-        stick.draw();
+        // stick.draw();
 
+        //-----------------------------------------------------//
 
+        glm::mat4 quadModel = IDENTITY;
+
+        glm::vec3 pivot = glm::vec3(-0.5f, 0.5f, 0.0f);
+
+        rotateAroundPivot(quadModel, currentTime, Z_AXIS, pivot);
+
+        quad.shader.setRenderState(quadModel, view, proj, Colors::red);
+        quad.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
