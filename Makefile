@@ -9,7 +9,8 @@ SRC := \
 	src/Shader.cpp \
 	src/Camera.cpp \
 	src/Shape.cpp \
-	src/Texture.cpp
+	src/Texture.cpp \
+	src/CubeMap.cpp
 
 LIBS := -lglfw -lGLEW -lGL
 

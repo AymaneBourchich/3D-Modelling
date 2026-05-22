@@ -12,6 +12,7 @@
 #include "Shader.hpp"
 #include "Shape.hpp"
 #include "GeometryData.hpp"
+#include "CubeMap.hpp"
 #include <vector>
 
 void translate(glm::mat4 &model, glm::vec3 value)
@@ -26,15 +27,24 @@ void rotate(glm::mat4 &model, float angle, glm::vec3 axis)
 
 void rotateAroundPivot(glm::mat4 &model, float angle, glm::vec3 axis, glm::vec3 pivot)
 {
-    translate(model, -pivot);
-    rotate(model, angle, axis);
     translate(model, pivot);
+    rotate(model, angle, axis);
+    translate(model, -pivot);
 }
 
 void scale(glm::mat4 &model, glm::vec3 value)
 {
     model = glm::scale(model, value);
 }
+
+std::string faces[6] =
+    {
+        "textures/skybox/right.jpg",
+        "textures/skybox/left.jpg",
+        "textures/skybox/top.jpg",
+        "textures/skybox/bottom.jpg",
+        "textures/skybox/front.jpg",
+        "textures/skybox/back.jpg"};
 
 GLFWwindow *globalWindow = nullptr;
 static Camera *globalCamera = nullptr;
@@ -114,10 +124,12 @@ int main()
 
     Shader shaderBasic("shaders/basic.vert", "shaders/basic.frag");
     Shader shaderTex("shaders/texture.vert", "shaders/texture.frag");
+    Shader shaderMap("shaders/cubemap.vert", "shaders/cubemap.frag");
 
     Texture texFloor("textures/floor.jpg");
     Texture texHex("textures/hex.jpg");
     Texture texNebula("textures/nebula.jpg");
+    CubeMap CubeMap(faces);
 
     std::vector<Vertex> sphereVertices;
     std::vector<unsigned int> sphereIndices;
@@ -129,6 +141,8 @@ int main()
     Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape quad(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape lantern(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+
+    Shape sky(shaderMap, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     glfwSetCursorPosCallback(globalWindow, mouseCallback);
     glfwSetInputMode(globalWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -150,6 +164,15 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
+
+        glDepthMask(GL_FALSE);
+        sky.shader.use();
+        CubeMap.bind();
+        sky.shader.setView(glm::mat4(glm::mat3(view)));
+        sky.shader.setProj(proj);
+        sky.draw();
+        glDepthMask(GL_TRUE);
+
         //-----------DRAWING FLOOR------------------/
         glm::mat4 floorModel = IDENTITY;
         rotate(floorModel, glm::radians(90.0f), X_AXIS);
@@ -159,7 +182,7 @@ int main()
         texHex.bind();
         floor.shader.setInt("texture0", 0);
         glActiveTexture(GL_TEXTURE0);
-        // floor.draw();
+        floor.draw();
 
         //---------------------------------------------/
 
@@ -167,7 +190,7 @@ int main()
         translate(lanternModel, glm::vec3(-3.0f, 2.5f, -3.0f));
         rotate(lanternModel, 2 * currentTime, -X_AXIS + Y_AXIS);
         lantern.shader.setRenderState(lanternModel, view, proj, Colors::red);
-        // lantern.draw();
+        lantern.draw();
 
         //-------------------------------------------------//
 
@@ -176,7 +199,7 @@ int main()
         rotate(stickModel, 3 * currentTime, Z_AXIS);
         scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
         stick.shader.setRenderState(stickModel, view, proj, Colors::darkGray);
-        // stick.draw();
+        stick.draw();
 
         //-----------------------------------------------------//
 
@@ -184,10 +207,15 @@ int main()
 
         glm::vec3 pivot = glm::vec3(-0.5f, 0.5f, 0.0f);
 
-        rotateAroundPivot(quadModel, currentTime, Z_AXIS, pivot);
+        translate(quadModel, 2.0f * Y_AXIS);
+        rotateAroundPivot(quadModel, sinf(currentTime), Z_AXIS, pivot);
 
         quad.shader.setRenderState(quadModel, view, proj, Colors::red);
-        quad.draw();
+        //quad.draw();
+
+        //-------------------------------------//
+
+        
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
