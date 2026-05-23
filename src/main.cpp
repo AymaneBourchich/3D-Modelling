@@ -82,6 +82,7 @@ int main()
     Shader shaderMap("shaders/cubemap.vert", "shaders/cubemap.frag");
 
     Texture texFloor("textures/floor.jpg");
+    Texture texSoil("textures/soil1.jpg");
     Texture texHex("textures/hex.jpg");
     Texture texNebula("textures/nebula.jpg");
 
@@ -124,6 +125,7 @@ int main()
         sky.shader.setRenderState(skyModel, glm::mat4(glm::mat3(view)), proj);
         sky.draw();
         glDepthMask(GL_TRUE);
+        glm::vec3 SUN_POSITION = glm::vec3(0.0f, 10.0f, -25.0f);
 
         //-----------DRAWING FLOOR------------------/
         glm::mat4 floorModel = IDENTITY;
@@ -131,18 +133,11 @@ int main()
         scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
 
         floor.shader.setRenderState(floorModel, view, proj);
-        texHex.bind();
+        texSoil.bind();
         floor.shader.setInt("texture0", 0);
         glActiveTexture(GL_TEXTURE0);
-        // floor.draw();
+        floor.draw();
 
-        //---------------------------------------------/
-
-        glm::mat4 lanternModel = IDENTITY;
-        translate(lanternModel, glm::vec3(-3.0f, 2.5f, -3.0f));
-        rotate(lanternModel, 2 * currentTime, -X_AXIS + Y_AXIS);
-        lantern.shader.setRenderState(lanternModel, view, proj, Colors::red);
-        lantern.draw();
 
         //-------------------------------------------------//
 
