@@ -13,7 +13,7 @@
 #include "Shape.hpp"
 #include "GeometryData.hpp"
 #include "CubeMap.hpp"
-#include <vector>
+#include <array>
 
 void translate(glm::mat4 &model, glm::vec3 value)
 {
@@ -37,18 +37,20 @@ void scale(glm::mat4 &model, glm::vec3 value)
     model = glm::scale(model, value);
 }
 
-std::string faces[6] =
-    {
-        "textures/skybox/right.jpg",
-        "textures/skybox/left.jpg",
-        "textures/skybox/top.jpg",
-        "textures/skybox/bottom.jpg",
-        "textures/skybox/front.jpg",
-        "textures/skybox/back.jpg"};
+std::array<std::string, 6> getCubemap(std::string folderName)
+{
+    return {
+        "cubemaps/" + folderName + "/right.jpg",
+        "cubemaps/" + folderName + "/left.jpg",
+        "cubemaps/" + folderName + "/top.jpg",
+        "cubemaps/" + folderName + "/bottom.jpg",
+        "cubemaps/" + folderName + "/front.jpg",
+        "cubemaps/" + folderName + "/back.jpg"};
+}
 
 GLFWwindow *globalWindow = nullptr;
 static Camera *globalCamera = nullptr;
-static void mouseCallback(GLFWwindow *window, double mouseX, double mouseY)
+static void mouseCallback([[maybe_unused]] GLFWwindow *window, double mouseX, double mouseY)
 {
     globalCamera->processMouseInput(mouseX, mouseY);
 }
@@ -58,53 +60,6 @@ static void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 }
 
-inline void generateSphere(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, float radius, int stacks, int sectors)
-{
-    vertices.clear();
-    indices.clear();
-
-    float pi = 3.1415926f;
-
-    for (int i = 0; i <= stacks; i++)
-    {
-        float v = pi * i / stacks;
-        float y = cos(v);
-        float r = sin(v);
-
-        for (int j = 0; j <= sectors; j++)
-        {
-            float u = 2.0f * pi * j / sectors;
-
-            float x = cos(u) * r;
-            float z = sin(u) * r;
-
-            Vertex vertex;
-            vertex.position = glm::vec3(x, y, z) * radius;
-            vertex.normal = glm::vec3(x, y, z);
-            vertex.texCoord = glm::vec2((float)j / sectors, (float)i / stacks);
-            vertex.color = Colors::white;
-
-            vertices.push_back(vertex);
-        }
-    }
-
-    for (int i = 0; i < stacks; i++)
-    {
-        for (int j = 0; j < sectors; j++)
-        {
-            int first = i * (sectors + 1) + j;
-            int second = first + sectors + 1;
-
-            indices.push_back(first);
-            indices.push_back(second);
-            indices.push_back(first + 1);
-
-            indices.push_back(second);
-            indices.push_back(second + 1);
-            indices.push_back(first + 1);
-        }
-    }
-}
 int main()
 {
     glfwInit();
@@ -129,13 +84,9 @@ int main()
     Texture texFloor("textures/floor.jpg");
     Texture texHex("textures/hex.jpg");
     Texture texNebula("textures/nebula.jpg");
-    CubeMap CubeMap(faces);
 
-    std::vector<Vertex> sphereVertices;
-    std::vector<unsigned int> sphereIndices;
-    generateSphere(sphereVertices, sphereIndices, 1.0f, 32, 32);
+    CubeMap CubeMap(getCubemap("sunset"));
 
-    Shape sphere(shaderTex, sphereVertices.data(), sphereVertices.size(), sphereIndices.data(), sphereIndices.size());
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape floor(shaderTex, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
@@ -164,12 +115,13 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-
+        //-----------------------------------------//
         glDepthMask(GL_FALSE);
+        glm::mat4 skyModel = IDENTITY;
         sky.shader.use();
         CubeMap.bind();
-        sky.shader.setView(glm::mat4(glm::mat3(view)));
-        sky.shader.setProj(proj);
+        rotate(skyModel, glm::radians(90.0f), Y_AXIS);
+        sky.shader.setRenderState(skyModel, glm::mat4(glm::mat3(view)), proj);
         sky.draw();
         glDepthMask(GL_TRUE);
 
@@ -182,7 +134,7 @@ int main()
         texHex.bind();
         floor.shader.setInt("texture0", 0);
         glActiveTexture(GL_TEXTURE0);
-        floor.draw();
+        // floor.draw();
 
         //---------------------------------------------/
 
@@ -211,11 +163,9 @@ int main()
         rotateAroundPivot(quadModel, sinf(currentTime), Z_AXIS, pivot);
 
         quad.shader.setRenderState(quadModel, view, proj, Colors::red);
-        //quad.draw();
+        // quad.draw();
 
         //-------------------------------------//
-
-        
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

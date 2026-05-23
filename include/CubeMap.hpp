@@ -1,11 +1,12 @@
 #pragma once
 
 #include <string>
+#include <array>
 
 class CubeMap
 {
 public:
-    CubeMap(const std::string faces[6]);
+    CubeMap(const std::array<std::string, 6> faces);
 
     ~CubeMap();
 

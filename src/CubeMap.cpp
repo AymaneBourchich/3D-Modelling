@@ -3,7 +3,8 @@
 #include "stb_image.h"
 #include "CubeMap.hpp"
 
-CubeMap::CubeMap(const std::string faces[6])
+
+CubeMap::CubeMap(std::array<std::string, 6> faces)
 {
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
