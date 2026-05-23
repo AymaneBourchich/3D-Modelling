@@ -80,6 +80,7 @@ int main()
     Shader shaderBasic("shaders/basic.vert", "shaders/basic.frag");
     Shader shaderTex("shaders/texture.vert", "shaders/texture.frag");
     Shader shaderMap("shaders/cubemap.vert", "shaders/cubemap.frag");
+    Shader shaderLight("shaders/light.vert", "shaders/light.frag");
 
     Texture texFloor("textures/floor.jpg");
     Texture texSoil("textures/soil1.jpg");
@@ -92,7 +93,7 @@ int main()
     Shape floor(shaderTex, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape quad(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape lantern(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+    Shape box(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     Shape sky(shaderMap, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
@@ -138,6 +139,23 @@ int main()
         glActiveTexture(GL_TEXTURE0);
         floor.draw();
 
+        //----------------------------------------------//
+        glm::mat4 cubeModel = IDENTITY;
+        translate(cubeModel, Y_AXIS);
+        rotate(cubeModel, currentTime, Y_AXIS);
+        box.shader.use();
+
+        box.shader.setModel(cubeModel);
+        box.shader.setView(view);
+        box.shader.setProj(proj);
+
+        box.shader.setVec3("lightPos", SUN_POSITION);
+        box.shader.setVec3("lightColor", glm::vec3(Colors::orange));
+        box.shader.setVec3("objectColor", glm::vec3(Colors::white));
+
+        box.draw();
+
+
 
         //-------------------------------------------------//
 
@@ -146,7 +164,7 @@ int main()
         rotate(stickModel, 3 * currentTime, Z_AXIS);
         scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
         stick.shader.setRenderState(stickModel, view, proj, Colors::darkGray);
-        stick.draw();
+        //stick.draw();
 
         //-----------------------------------------------------//
 
