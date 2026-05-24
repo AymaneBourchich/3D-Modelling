@@ -120,13 +120,20 @@ int main()
         //-----------------------------------------//
         glDepthMask(GL_FALSE);
         glm::mat4 skyModel = IDENTITY;
+
+        float WORLD_ROTATION = log(currentTime);
         sky.shader.use();
         CubeMap.bind();
+        rotate(skyModel, WORLD_ROTATION, Y_AXIS);
         rotate(skyModel, glm::radians(90.0f), Y_AXIS);
         sky.shader.setRenderState(skyModel, glm::mat4(glm::mat3(view)), proj);
         sky.draw();
         glDepthMask(GL_TRUE);
+
+        glm::mat4 rotationMat = IDENTITY;
+        rotate(rotationMat, WORLD_ROTATION, Y_AXIS);
         glm::vec3 SUN_POSITION = glm::vec3(0.0f, 10.0f, -25.0f);
+        SUN_POSITION = glm::vec3(rotationMat * glm::vec4(SUN_POSITION, 1.0f));
 
         //-----------DRAWING FLOOR------------------/
         glm::mat4 floorModel = IDENTITY;
@@ -142,8 +149,6 @@ int main()
         //----------------------------------------------//
         glm::mat4 cubeModel = IDENTITY;
         translate(cubeModel, Y_AXIS);
-        rotate(cubeModel, currentTime, Y_AXIS);
-        rotate(cubeModel, 0.7 * currentTime, X_AXIS);
         box.shader.use();
 
         box.shader.setModel(cubeModel);
@@ -157,8 +162,6 @@ int main()
 
         box.draw();
 
-
-
         //-------------------------------------------------//
 
         glm::mat4 stickModel = IDENTITY;
@@ -166,7 +169,7 @@ int main()
         rotate(stickModel, 3 * currentTime, Z_AXIS);
         scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
         stick.shader.setRenderState(stickModel, view, proj);
-        //stick.draw();
+        // stick.draw();
 
         //-----------------------------------------------------//
 
