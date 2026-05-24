@@ -90,7 +90,7 @@ int main()
     Texture texHex("textures/hex.jpg");
     Texture texNebula("textures/nebula.jpg");
 
-    CubeMap CubeMap(getCubemap("blueSky"));
+    CubeMap CubeMap(getCubemap("sunset"));
 
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape floor(shaderTex, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
@@ -135,26 +135,27 @@ int main()
 
         glm::mat4 rotationMat = IDENTITY;
         rotate(rotationMat, WORLD_ROTATION, Y_AXIS);
-        glm::vec3 SUN_POSITION = glm::vec3(0.0f, 10.0f, -25.0f);
+        glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
         SUN_POSITION = glm::vec3(rotationMat * glm::vec4(SUN_POSITION, 1.0f));
 
         //-----------DRAWING FLOOR------------------/
+
         glm::mat4 floorModel = IDENTITY;
         rotate(floorModel, glm::radians(90.0f), X_AXIS);
         scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
 
         floor.shader.setRenderState(floorModel, view, proj);
-        texSoil.bind();
         floor.shader.setInt("texture0", 0);
         glActiveTexture(GL_TEXTURE0);
+        texSoil.bind();
         floor.draw();
 
         //----------------------------------------------//
         glm::mat4 cubeModel = IDENTITY;
-        translate(cubeModel, Y_AXIS);
+        translate(cubeModel, 0.5f * Y_AXIS);
         box.shader.use();
-        
-        rotate(cubeModel, currentTime, Y_AXIS);
+
+        rotate(cubeModel, glm::radians(30.0f), Y_AXIS);
         box.shader.setModel(cubeModel);
         box.shader.setView(view);
         box.shader.setProj(proj);
@@ -167,39 +168,19 @@ int main()
         glActiveTexture(GL_TEXTURE2);
         texBoxSpec.bind();
 
-
         box.shader.setFloat("material.shininess", 32.0f);
-        
 
-        box.shader.setVec3("light.position", SUN_POSITION);
-        box.shader.setVec3("light.ambient", lights[LightName::SUN_NOON].ambient);
-        box.shader.setVec3("light.diffuse", lights[LightName::SUN_NOON].diffuse);
-        box.shader.setVec3("light.specular", lights[LightName::SUN_NOON].specular);
-
+        box.shader.setVec3("light.direction", SUN_POSITION);
+        box.shader.setVec3("light.ambient", lights[LightName::SUNSET].ambient);
+        box.shader.setVec3("light.diffuse", lights[LightName::SUNSET].diffuse);
+        box.shader.setVec3("light.specular", lights[LightName::SUNSET].specular);
         box.draw();
 
-        //-------------------------------------------------//
-
-        glm::mat4 stickModel = IDENTITY;
-        translate(stickModel, glm::vec3(0.0f, 1.25f, -0.5f));
-        rotate(stickModel, 3 * currentTime, Z_AXIS);
-        scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
-        stick.shader.setRenderState(stickModel, view, proj);
-        // stick.draw();
-
-        //-----------------------------------------------------//
-
-        glm::mat4 quadModel = IDENTITY;
-
-        glm::vec3 pivot = glm::vec3(-0.5f, 0.5f, 0.0f);
-
-        translate(quadModel, 2.0f * Y_AXIS);
-        rotateAroundPivot(quadModel, sinf(currentTime), Z_AXIS, pivot);
-
-        quad.shader.setRenderState(quadModel, view, proj, Colors::red);
-        // quad.draw();
-
         //-------------------------------------//
+
+        
+
+        
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
