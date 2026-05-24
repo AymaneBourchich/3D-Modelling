@@ -12,12 +12,13 @@ public:
     void processMouseInput(double mouseX, double mouseY);
 
     glm::mat4 getViewMatrix() const;
+    glm::vec3 position;
 
 private:
     void updateCameraVectors();
 
 private:
-    glm::vec3 position;
+    
 
     glm::vec3 front;
     glm::vec3 up;

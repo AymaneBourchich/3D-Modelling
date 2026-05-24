@@ -143,6 +143,7 @@ int main()
         glm::mat4 cubeModel = IDENTITY;
         translate(cubeModel, Y_AXIS);
         rotate(cubeModel, currentTime, Y_AXIS);
+        rotate(cubeModel, 0.7 * currentTime, X_AXIS);
         box.shader.use();
 
         box.shader.setModel(cubeModel);
@@ -152,6 +153,7 @@ int main()
         box.shader.setVec3("lightPos", SUN_POSITION);
         box.shader.setVec3("lightColor", glm::vec3(Colors::orange));
         box.shader.setVec3("objectColor", glm::vec3(Colors::white));
+        box.shader.setVec3("viewPos", camera.position);
 
         box.draw();
 
@@ -163,7 +165,7 @@ int main()
         translate(stickModel, glm::vec3(0.0f, 1.25f, -0.5f));
         rotate(stickModel, 3 * currentTime, Z_AXIS);
         scale(stickModel, glm::vec3(1.5f, 0.1f, 1.0f));
-        stick.shader.setRenderState(stickModel, view, proj, Colors::darkGray);
+        stick.shader.setRenderState(stickModel, view, proj);
         //stick.draw();
 
         //-----------------------------------------------------//
