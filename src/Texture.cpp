@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-Texture::Texture(const std::string& filePath)
+Texture::Texture(const std::string &filePath)
 {
     glGenTextures(1, &textureId);
 
@@ -25,22 +25,30 @@ Texture::Texture(const std::string& filePath)
 
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* data = stbi_load(filePath.c_str(), &width, &height, &channelCount, 0);
+    unsigned char *data = stbi_load(filePath.c_str(), &width, &height, &channelCount, 0);
 
     if (data)
     {
         GLenum format = GL_RGB;
+        GLenum internalFormat = GL_RGB8;
 
         if (channelCount == 1)
+        {
             format = GL_RED;
-
+            internalFormat = GL_R8;
+        }
         else if (channelCount == 3)
+        {
             format = GL_RGB;
-
+            internalFormat = GL_RGB8;
+        }
         else if (channelCount == 4)
+        {
             format = GL_RGBA;
+            internalFormat = GL_RGBA8;
+        }
 
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
         glGenerateMipmap(GL_TEXTURE_2D);
     }

@@ -6,7 +6,6 @@ layout (location = 2) in vec2 vertexTexCoord;
 layout (location = 3) in vec4 vertexColor;
 
 out vec2 fragmentTexCoord;
-out vec4 fragmentColor;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -15,7 +14,6 @@ uniform mat4 projection;
 void main()
 {
     fragmentTexCoord = vertexTexCoord;
-    fragmentColor = vertexColor;
 
     gl_Position = projection * view * model * vec4(vertexPosition, 1.0);
 }

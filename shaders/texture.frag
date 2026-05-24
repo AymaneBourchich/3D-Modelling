@@ -1,7 +1,6 @@
 #version 330 core
 
 in vec2 fragmentTexCoord;
-in vec4 fragmentColor;
 
 out vec4 finalColor;
 
@@ -11,5 +10,5 @@ void main()
 {
     vec4 textureColor = texture(texture0, fragmentTexCoord);
 
-    finalColor = textureColor * fragmentColor;
+    finalColor = textureColor;
 }

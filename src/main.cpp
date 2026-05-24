@@ -83,12 +83,10 @@ int main()
     Shader shaderMap("shaders/cubemap.vert", "shaders/cubemap.frag");
     Shader shaderLight("shaders/light.vert", "shaders/light.frag");
 
-    Texture texFloor("textures/floor.jpg");
     Texture texBox("textures/box.jpg");
     Texture texBoxSpec("textures/boxSpec.jpg");
-    Texture texSoil("textures/soil1.jpg");
-    Texture texHex("textures/hex.jpg");
-    Texture texNebula("textures/nebula.jpg");
+    Texture texSoil("textures/soil.jpg");
+    Texture texConcrete("textures/rebar.jpg");
 
     CubeMap CubeMap(getCubemap("sunset"));
 
@@ -97,6 +95,7 @@ int main()
     Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape quad(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape box(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+    Shape tower(shaderTex, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     Shape sky(shaderMap, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
@@ -160,25 +159,37 @@ int main()
         box.shader.setView(view);
         box.shader.setProj(proj);
 
-        box.shader.setInt("material.diffuse", 1);
-        glActiveTexture(GL_TEXTURE1);
+        box.shader.setInt("material.diffuse", 0);
+        glActiveTexture(GL_TEXTURE0);
         texBox.bind();
 
-        box.shader.setInt("material.specular", 2);
-        glActiveTexture(GL_TEXTURE2);
+        box.shader.setInt("material.specular", 1);
+        glActiveTexture(GL_TEXTURE1);
         texBoxSpec.bind();
 
         box.shader.setFloat("material.shininess", 32.0f);
 
         box.shader.setVec3("light.direction", SUN_POSITION);
-        box.shader.setVec3("light.ambient", lights[LightName::SUNSET].ambient);
-        box.shader.setVec3("light.diffuse", lights[LightName::SUNSET].diffuse);
-        box.shader.setVec3("light.specular", lights[LightName::SUNSET].specular);
+        box.shader.setVec3("light.ambient", lights[LightName::SUN_NOON].ambient);
+        box.shader.setVec3("light.diffuse", lights[LightName::SUN_NOON].diffuse);
+        box.shader.setVec3("light.specular", lights[LightName::SUN_NOON].specular);
         box.draw();
 
         //-------------------------------------//
 
-        
+        glm::mat4 towerModel = IDENTITY;
+        translate(towerModel, -Z_AXIS + Y_AXIS);
+
+        tower.shader.use();
+
+        tower.shader.setModel(towerModel);
+        tower.shader.setView(view);
+        tower.shader.setProj(proj);
+        tower.shader.setInt("texture0", 0);
+        glActiveTexture(GL_TEXTURE0);
+        texConcrete.bind();
+
+        tower.draw();
 
         
 
