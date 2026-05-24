@@ -80,18 +80,22 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &matrix) const
 
 void Shader::setModel(const glm::mat4 &matrix) const
 {
+    use();
     setMat4("model", matrix);
 }
 void Shader::setView(const glm::mat4 &matrix) const
 {
+    use();
     setMat4("view", matrix);
 }
 void Shader::setProj(const glm::mat4 &matrix) const
 {
+    use();
     setMat4("projection", matrix);
 }
 void Shader::setColor(const glm::vec4 &value) const
 {
+    use();
     setVec4("color", value);
 }
 void Shader::setMVP(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj) const
@@ -110,6 +114,7 @@ void Shader::setInt(const std::string &name, int value) const
 
 void Shader::setFloat(const std::string &name, float value) const
 {
+    use();
     glUniform1f(glGetUniformLocation(shaderProgramId, name.c_str()), value);
 }
 

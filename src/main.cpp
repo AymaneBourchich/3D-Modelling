@@ -120,24 +120,29 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        float WORLD_ROTATION = 0.2 * log(currentTime);
+        float WORLD_ROTATION_ANGLE = 0.5 * log(currentTime);
+        glm::mat4 WORLD_ROTATION = glm::rotate(IDENTITY, WORLD_ROTATION_ANGLE, Y_AXIS);
+
+        glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
+        SUN_POSITION = glm::vec3(WORLD_ROTATION * glm::vec4(SUN_POSITION, 1.0f));
+
+        shaderLight.setVec3("light.direction", SUN_POSITION);
+        shaderLight.setVec3("light.ambient", lights[LightName::SUN_NOON].ambient);
+        shaderLight.setVec3("light.diffuse", lights[LightName::SUNSET].diffuse);
+        shaderLight.setVec3("light.specular", lights[LightName::SUNSET].specular);
+
+        shaderLight.setView(view);
+        shaderLight.setProj(proj);
+
+
         //-----------------------------------------//
         glDepthMask(GL_FALSE);
-        glm::mat4 skyModel = IDENTITY;
-        rotate(skyModel, WORLD_ROTATION, Y_AXIS);
+        glm::mat4 skyModel = WORLD_ROTATION;
         rotate(skyModel, glm::radians(90.0f), Y_AXIS);
         sky.shader.setMVP(skyModel, glm::mat4(glm::mat3(view)), proj);
-
         CubeMap.bind();
-
         sky.draw();
         glDepthMask(GL_TRUE);
-
-        //-----------------------------------------//
-        glm::mat4 rotationMat = IDENTITY;
-        rotate(rotationMat, WORLD_ROTATION, Y_AXIS);
-        glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
-        SUN_POSITION = glm::vec3(rotationMat * glm::vec4(SUN_POSITION, 1.0f));
 
         //-----------DRAWING FLOOR------------------/
 
@@ -151,10 +156,10 @@ int main()
         floor.draw();
 
         //----------------------------------------------//
-        glm::mat4 cubeModel = IDENTITY;
-        translate(cubeModel, 0.5f * Y_AXIS - 4.0f * Z_AXIS);
-        rotate(cubeModel, glm::radians(30.0f), Y_AXIS);
-        box.shader.setMVP(cubeModel, view, proj);
+        glm::mat4 boxModel = IDENTITY;
+        translate(boxModel, 0.5f * Y_AXIS - 4.0f * Z_AXIS);
+        rotate(boxModel, glm::radians(30.0f), Y_AXIS);
+        box.shader.setModel(boxModel);
 
         box.shader.setInt("material.diffuse", 0);
         texBox.bind(0);
@@ -164,10 +169,7 @@ int main()
 
         box.shader.setFloat("material.shininess", 32.0f);
 
-        box.shader.setVec3("light.direction", SUN_POSITION);
-        box.shader.setVec3("light.ambient", lights[LightName::SUN_NOON].ambient);
-        box.shader.setVec3("light.diffuse", lights[LightName::SUNSET].diffuse);
-        box.shader.setVec3("light.specular", lights[LightName::SUNSET].specular);
+        
         box.draw();
 
         //-------------------------------------//
@@ -187,9 +189,11 @@ int main()
 
         //--------------------------------------//
 
-        glm::mat4 bladeModel1 = IDENTITY;
-        translate(bladeModel1, -1.5f * Z_AXIS + 3.5f * Y_AXIS);
-        rotate(bladeModel1, currentTime, Z_AXIS);
+        glm::mat4 baseBladeModel = IDENTITY;
+        translate(baseBladeModel, -1.5f * Z_AXIS + 3.5f * Y_AXIS);
+        rotate(baseBladeModel, currentTime, Z_AXIS);
+
+        glm::mat4 bladeModel1 = baseBladeModel;
         scale(bladeModel1, glm::vec3(3.0f, 0.2f, 0.2f));
 
         blade.shader.use();
@@ -202,9 +206,7 @@ int main()
 
         blade.draw();
 
-        glm::mat4 bladeModel2 = IDENTITY;
-        translate(bladeModel2, -1.5f * Z_AXIS + 3.5f * Y_AXIS);
-        rotate(bladeModel2, currentTime, Z_AXIS);
+        glm::mat4 bladeModel2 = baseBladeModel;
         rotate(bladeModel2, glm::radians(90.0f), Z_AXIS);
         scale(bladeModel2, glm::vec3(3.0f, 0.2f, 0.2f));
 
