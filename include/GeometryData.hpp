@@ -59,10 +59,10 @@ namespace Quad
     // {x, y, z}, {nx, ny, nz}, {u, v}, {r, g, b, a}
     Vertex VERTICES[] =
         {
-            {{-0.5f, -0.5f, 0.0f}, {}, {0.0f, 0.0f}, Colors::white},
-            {{0.5f, -0.5f, 0.0f}, {}, {1.0f, 0.0f}, Colors::white},
-            {{0.5f, 0.5f, 0.0f}, {}, {1.0f, 1.0f}, Colors::white},
-            {{-0.5f, 0.5f, 0.0f}, {}, {0.0f, 1.0f}, Colors::white}};
+            {{-0.5f, -0.5f, 0.0f}, -Z_AXIS, {0.0f, 0.0f}, Colors::white},
+            {{0.5f, -0.5f, 0.0f}, -Z_AXIS, {1.0f, 0.0f}, Colors::white},
+            {{0.5f, 0.5f, 0.0f}, -Z_AXIS, {1.0f, 1.0f}, Colors::white},
+            {{-0.5f, 0.5f, 0.0f}, -Z_AXIS, {0.0f, 1.0f}, Colors::white}};
 
     const unsigned int INDICES[] =
         {

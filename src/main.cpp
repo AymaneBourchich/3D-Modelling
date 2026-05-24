@@ -88,10 +88,10 @@ int main()
     Texture texSoil("textures/soil.jpg");
     Texture texConcrete("textures/rebar.jpg");
 
-    CubeMap CubeMap(getCubemap("sunset"));
+    CubeMap CubeMap(getCubemap("greySky"));
 
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
-    Shape floor(shaderTex, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
+    Shape floor(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape quad(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape box(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
@@ -120,16 +120,16 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        float WORLD_ROTATION_ANGLE = 0.5 * log(currentTime);
+        float WORLD_ROTATION_ANGLE = log(currentTime);
         glm::mat4 WORLD_ROTATION = glm::rotate(IDENTITY, WORLD_ROTATION_ANGLE, Y_AXIS);
 
         glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
         SUN_POSITION = glm::vec3(WORLD_ROTATION * glm::vec4(SUN_POSITION, 1.0f));
 
         shaderLight.setVec3("light.direction", SUN_POSITION);
-        shaderLight.setVec3("light.ambient", lights[LightName::SUN_NOON].ambient);
-        shaderLight.setVec3("light.diffuse", lights[LightName::SUNSET].diffuse);
-        shaderLight.setVec3("light.specular", lights[LightName::SUNSET].specular);
+        shaderLight.setVec3("light.ambient", lights[LightName::OVERCAST_DAY].ambient);
+        shaderLight.setVec3("light.diffuse", lights[LightName::OVERCAST_DAY].diffuse);
+        shaderLight.setVec3("light.specular", lights[LightName::OVERCAST_DAY].specular);
 
         shaderLight.setView(view);
         shaderLight.setProj(proj);
@@ -149,13 +149,18 @@ int main()
         glm::mat4 floorModel = IDENTITY;
         rotate(floorModel, glm::radians(90.0f), X_AXIS);
         scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
-        floor.shader.setMVP(floorModel, view, proj);
+        floor.shader.setModel(floorModel);
 
-        floor.shader.setInt("texture0", 0);
+        floor.shader.setInt("material.diffuse", 0);
         texSoil.bind(0);
+
+        floor.shader.setInt("material.specular", 1);
+        texSoil.bind(1);
+
+        floor.shader.setFloat("material.shininess", 16.0f);
         floor.draw();
 
-        //----------------------------------------------//
+        //-------------------------BOX---------------------//
         glm::mat4 boxModel = IDENTITY;
         translate(boxModel, 0.5f * Y_AXIS - 4.0f * Z_AXIS);
         rotate(boxModel, glm::radians(30.0f), Y_AXIS);
@@ -168,11 +173,10 @@ int main()
         texBoxSpec.bind(1);
 
         box.shader.setFloat("material.shininess", 32.0f);
-
         
         box.draw();
 
-        //-------------------------------------//
+        //-------------------TOWER--------------//
 
         glm::mat4 towerModel = IDENTITY;
         translate(towerModel, -Z_AXIS + Y_AXIS);
@@ -187,7 +191,7 @@ int main()
 
         tower.draw();
 
-        //--------------------------------------//
+        //----------------------BLADES--------------//
 
         glm::mat4 baseBladeModel = IDENTITY;
         translate(baseBladeModel, -1.5f * Z_AXIS + 3.5f * Y_AXIS);
