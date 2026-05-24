@@ -84,6 +84,8 @@ int main()
     Shader shaderLight("shaders/light.vert", "shaders/light.frag");
 
     Texture texFloor("textures/floor.jpg");
+    Texture texBox("textures/box.jpg");
+    Texture texBoxSpec("textures/boxSpec.jpg");
     Texture texSoil("textures/soil1.jpg");
     Texture texHex("textures/hex.jpg");
     Texture texNebula("textures/nebula.jpg");
@@ -151,15 +153,22 @@ int main()
         glm::mat4 cubeModel = IDENTITY;
         translate(cubeModel, Y_AXIS);
         box.shader.use();
+        
         rotate(cubeModel, currentTime, Y_AXIS);
         box.shader.setModel(cubeModel);
         box.shader.setView(view);
         box.shader.setProj(proj);
 
-        box.shader.setVec3("material.ambient", materials[MaterialName::EMERALD].ambient);
-        box.shader.setVec3("material.diffuse", materials[MaterialName::EMERALD].diffuse);
-        box.shader.setVec3("material.specular", materials[MaterialName::EMERALD].specular);
-        box.shader.setFloat("material.shininess", materials[MaterialName::EMERALD].shininess * 128);
+        box.shader.setInt("material.diffuse", 1);
+        glActiveTexture(GL_TEXTURE1);
+        texBox.bind();
+
+        box.shader.setInt("material.specular", 2);
+        glActiveTexture(GL_TEXTURE2);
+        texBoxSpec.bind();
+
+
+        box.shader.setFloat("material.shininess", 32.0f);
         
 
         box.shader.setVec3("light.position", SUN_POSITION);
