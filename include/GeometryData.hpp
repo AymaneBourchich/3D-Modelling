@@ -1,4 +1,7 @@
+#pragma once
+
 #include "Vertex.hpp"
+#include <glm/glm.hpp>
 
 glm::vec3 X_AXIS = glm::vec3(1.0f, 0.0f, 0.0f);
 glm::vec3 Y_AXIS = glm::vec3(0.0f, 1.0f, 0.0f);

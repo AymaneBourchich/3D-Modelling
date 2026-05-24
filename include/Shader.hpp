@@ -24,6 +24,7 @@ public:
     void setRenderState(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj, const glm::vec4 &color = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f)) const;
 
     void setInt(const std::string &name, int value) const;
+    void setFloat(const std::string &name, float value) const;
 
     unsigned int getId() const;
 

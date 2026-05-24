@@ -13,7 +13,8 @@
 #include "Shape.hpp"
 #include "GeometryData.hpp"
 #include "CubeMap.hpp"
-#include <array>
+#include "MaterialData.hpp"
+#include "LightData.hpp"
 
 void translate(glm::mat4 &model, glm::vec3 value)
 {
@@ -87,7 +88,7 @@ int main()
     Texture texHex("textures/hex.jpg");
     Texture texNebula("textures/nebula.jpg");
 
-    CubeMap CubeMap(getCubemap("sunset"));
+    CubeMap CubeMap(getCubemap("blueSky"));
 
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape floor(shaderTex, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
@@ -121,7 +122,7 @@ int main()
         glDepthMask(GL_FALSE);
         glm::mat4 skyModel = IDENTITY;
 
-        float WORLD_ROTATION = log(currentTime);
+        float WORLD_ROTATION = 0;
         sky.shader.use();
         CubeMap.bind();
         rotate(skyModel, WORLD_ROTATION, Y_AXIS);
@@ -150,15 +151,21 @@ int main()
         glm::mat4 cubeModel = IDENTITY;
         translate(cubeModel, Y_AXIS);
         box.shader.use();
-
+        rotate(cubeModel, currentTime, Y_AXIS);
         box.shader.setModel(cubeModel);
         box.shader.setView(view);
         box.shader.setProj(proj);
 
-        box.shader.setVec3("lightPos", SUN_POSITION);
-        box.shader.setVec3("lightColor", glm::vec3(Colors::orange));
-        box.shader.setVec3("objectColor", glm::vec3(Colors::white));
-        box.shader.setVec3("viewPos", camera.position);
+        box.shader.setVec3("material.ambient", materials[MaterialName::EMERALD].ambient);
+        box.shader.setVec3("material.diffuse", materials[MaterialName::EMERALD].diffuse);
+        box.shader.setVec3("material.specular", materials[MaterialName::EMERALD].specular);
+        box.shader.setFloat("material.shininess", materials[MaterialName::EMERALD].shininess * 128);
+        
+
+        box.shader.setVec3("light.position", SUN_POSITION);
+        box.shader.setVec3("light.ambient", lights[LightName::SUN_NOON].ambient);
+        box.shader.setVec3("light.diffuse", lights[LightName::SUN_NOON].diffuse);
+        box.shader.setVec3("light.specular", lights[LightName::SUN_NOON].specular);
 
         box.draw();
 

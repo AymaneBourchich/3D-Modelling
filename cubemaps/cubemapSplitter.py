@@ -56,6 +56,6 @@ def splitCubeMap(
 
 if __name__ == "__main__":
     splitCubeMap(
-        inputPath="purpleSky.png",
-        outputDirectory="purpleSky",
+        inputPath="blueSKy.png",
+        outputDirectory="blueSky",
     )
