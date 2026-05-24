@@ -9,7 +9,7 @@ public:
 
     ~Texture();
 
-    void bind() const;
+    void bind(int slot) const;
 
 private:
     unsigned int textureId;

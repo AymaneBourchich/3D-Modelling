@@ -21,7 +21,7 @@ public:
     void setProj(const glm::mat4 &matrix) const;
     void setColor(const glm::vec4 &value) const;
 
-    void setRenderState(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj, const glm::vec4 &color = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f)) const;
+    void setMVP(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj) const;
 
     void setInt(const std::string &name, int value) const;
     void setFloat(const std::string &name, float value) const;

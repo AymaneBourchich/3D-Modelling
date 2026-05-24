@@ -120,19 +120,20 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
+        float WORLD_ROTATION = 0.2 * log(currentTime);
         //-----------------------------------------//
         glDepthMask(GL_FALSE);
         glm::mat4 skyModel = IDENTITY;
-
-        float WORLD_ROTATION = 0.2 * log(currentTime);
-        sky.shader.use();
-        CubeMap.bind();
         rotate(skyModel, WORLD_ROTATION, Y_AXIS);
         rotate(skyModel, glm::radians(90.0f), Y_AXIS);
-        sky.shader.setRenderState(skyModel, glm::mat4(glm::mat3(view)), proj);
+        sky.shader.setMVP(skyModel, glm::mat4(glm::mat3(view)), proj);
+
+        CubeMap.bind();
+
         sky.draw();
         glDepthMask(GL_TRUE);
 
+        //-----------------------------------------//
         glm::mat4 rotationMat = IDENTITY;
         rotate(rotationMat, WORLD_ROTATION, Y_AXIS);
         glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
@@ -143,30 +144,23 @@ int main()
         glm::mat4 floorModel = IDENTITY;
         rotate(floorModel, glm::radians(90.0f), X_AXIS);
         scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
+        floor.shader.setMVP(floorModel, view, proj);
 
-        floor.shader.setRenderState(floorModel, view, proj);
         floor.shader.setInt("texture0", 0);
-        glActiveTexture(GL_TEXTURE0);
-        texSoil.bind();
+        texSoil.bind(0);
         floor.draw();
 
         //----------------------------------------------//
         glm::mat4 cubeModel = IDENTITY;
         translate(cubeModel, 0.5f * Y_AXIS - 4.0f * Z_AXIS);
-        box.shader.use();
-
         rotate(cubeModel, glm::radians(30.0f), Y_AXIS);
-        box.shader.setModel(cubeModel);
-        box.shader.setView(view);
-        box.shader.setProj(proj);
+        box.shader.setMVP(cubeModel, view, proj);
 
         box.shader.setInt("material.diffuse", 0);
-        glActiveTexture(GL_TEXTURE0);
-        texBox.bind();
+        texBox.bind(0);
 
         box.shader.setInt("material.specular", 1);
-        glActiveTexture(GL_TEXTURE1);
-        texBoxSpec.bind();
+        texBoxSpec.bind(1);
 
         box.shader.setFloat("material.shininess", 32.0f);
 
@@ -181,24 +175,20 @@ int main()
         glm::mat4 towerModel = IDENTITY;
         translate(towerModel, -Z_AXIS + Y_AXIS);
         scale(towerModel, glm::vec3(0.5f, 5.0f, 0.5f));
-
-        tower.shader.use();
-        tower.shader.setModel(towerModel);
+        tower.shader.setMVP(towerModel, view, proj);
 
         tower.shader.setInt("material.diffuse", 0);
-        glActiveTexture(GL_TEXTURE0);
-        texConcrete.bind();
+        texConcrete.bind(0);
 
         tower.shader.setInt("material.specular", 1);
-        glActiveTexture(GL_TEXTURE1);
-        texConcrete.bind();
+        texConcrete.bind(1);
 
         tower.draw();
 
         //--------------------------------------//
 
         glm::mat4 bladeModel1 = IDENTITY;
-        translate(bladeModel1,  -1.5f * Z_AXIS + 3.5f * Y_AXIS);
+        translate(bladeModel1, -1.5f * Z_AXIS + 3.5f * Y_AXIS);
         rotate(bladeModel1, currentTime, Z_AXIS);
         scale(bladeModel1, glm::vec3(3.0f, 0.2f, 0.2f));
 
@@ -206,25 +196,20 @@ int main()
         blade.shader.setModel(bladeModel1);
 
         blade.shader.setInt("material.diffuse", 0);
-        glActiveTexture(GL_TEXTURE0);
-        texBox.bind();
+        texBox.bind(0);
         blade.shader.setInt("material.specular", 1);
-        glActiveTexture(GL_TEXTURE1);
-        texBoxSpec.bind();
+        texBoxSpec.bind(1);
 
         blade.draw();
 
         glm::mat4 bladeModel2 = IDENTITY;
-        translate(bladeModel2,  -1.5f * Z_AXIS + 3.5f * Y_AXIS);
+        translate(bladeModel2, -1.5f * Z_AXIS + 3.5f * Y_AXIS);
         rotate(bladeModel2, currentTime, Z_AXIS);
         rotate(bladeModel2, glm::radians(90.0f), Z_AXIS);
         scale(bladeModel2, glm::vec3(3.0f, 0.2f, 0.2f));
 
-        blade.shader.use();
-        blade.shader.setModel(bladeModel2);
+        blade.shader.setMVP(bladeModel2, view, proj);
         blade.draw();
-
-        
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

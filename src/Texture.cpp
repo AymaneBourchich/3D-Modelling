@@ -65,7 +65,21 @@ Texture::~Texture()
     glDeleteTextures(1, &textureId);
 }
 
-void Texture::bind() const
+void Texture::bind(int slot) const
 {
+    switch (slot)
+    {
+        case 0:
+        glActiveTexture(GL_TEXTURE0);
+        break;
+
+        case 1:
+        glActiveTexture(GL_TEXTURE1);
+        break;
+
+        case 2:
+        glActiveTexture(GL_TEXTURE2);
+        break;
+    }
     glBindTexture(GL_TEXTURE_2D, textureId);
 }
