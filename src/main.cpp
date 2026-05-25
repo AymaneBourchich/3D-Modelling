@@ -17,7 +17,6 @@
 #include "LightData.hpp"
 #include "models.hpp"
 
-
 std::array<std::string, 6> getCubemap(std::string folderName)
 {
     return {
@@ -66,7 +65,7 @@ int main()
     Texture texBox("textures/box.jpg");
     Texture texBoxSpec("textures/boxSpec.jpg");
     Texture texSoil("textures/soil.jpg");
-    Texture texFloor("textures/floor.jpg");
+    Texture texFloor("textures/metal.jpg");
     Texture texConcrete("textures/rebar.jpg");
 
     CubeMap CubeMap(getCubemap("greySky"));
@@ -78,6 +77,7 @@ int main()
     Shape box(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
     Shape tower(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
     Shape blade(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+    Shape laser(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     Shape sky(shaderMap, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
@@ -107,6 +107,7 @@ int main()
         glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
         SUN_POSITION = glm::vec3(WORLD_ROTATION * glm::vec4(SUN_POSITION, 1.0f));
 
+        shaderLight.use();
         shaderLight.setVec3("light.direction", SUN_POSITION);
         shaderLight.setVec3("light.ambient", lights[LightName::OVERCAST_DAY].ambient);
         shaderLight.setVec3("light.diffuse", lights[LightName::OVERCAST_DAY].diffuse);
@@ -114,7 +115,6 @@ int main()
 
         shaderLight.setView(view);
         shaderLight.setProj(proj);
-
 
         //-----------------------------------------//
         glDepthMask(GL_FALSE);
@@ -154,8 +154,8 @@ int main()
         texBoxSpec.bind(1);
 
         box.shader.setFloat("material.shininess", 32.0f);
-        
-        //box.draw();
+
+        // box.draw();
 
         //-------------------TOWER--------------//
 
@@ -170,7 +170,7 @@ int main()
         tower.shader.setInt("material.specular", 1);
         texConcrete.bind(1);
 
-        //tower.draw();
+        // tower.draw();
 
         //----------------------BLADES--------------//
 
@@ -189,14 +189,14 @@ int main()
         blade.shader.setInt("material.specular", 1);
         texBoxSpec.bind(1);
 
-        //blade.draw();
+        // blade.draw();
 
         glm::mat4 bladeModel2 = baseBladeModel;
         rotate(bladeModel2, glm::radians(90.0f), Z_AXIS);
         scale(bladeModel2, glm::vec3(3.0f, 0.2f, 0.2f));
 
         blade.shader.setMVP(bladeModel2, view, proj);
-        //blade.draw();
+        // blade.draw();
 
         //-------------------------//
         wall.shader.setInt("material.diffuse", 0);
@@ -206,7 +206,7 @@ int main()
 
         glm::mat4 wallModelBase = glm::translate(IDENTITY, Y_AXIS);
         scale(wallModelBase, glm::vec3(7.0f, 3.0f, 20.0f));
-        
+
         glm::mat4 wallModel1 = wallModelBase;
         wall.shader.setModel(wallModel1);
         wall.draw();
@@ -226,9 +226,45 @@ int main()
         wall.shader.setModel(wallModel4);
         wall.draw();
 
-        
-
+        glm::mat4 roofModel = wallModelBase;
+        rotateAroundPivot(roofModel, glm::radians(90.0f), X_AXIS, glm::vec3(-0.5f, 0.5f, 0.0f));
+        wall.shader.setModel(roofModel);
         wall.draw();
+
+        //--------------------------//
+        laser.shader.use();
+        laser.shader.setColor(Colors::red);
+        laser.shader.setView(view);
+        laser.shader.setProj(proj);
+
+        glm::mat4 laser1 = IDENTITY;
+        translate(laser1, Y_AXIS - 2.0f * Z_AXIS);
+        translate(laser1, -0.75f * Y_AXIS - 5.0f * Z_AXIS);
+        translate(laser1, -Z_AXIS * 5.0f * sinf(2 * currentTime));
+        scale(laser1, glm::vec3(8.0f, 0.025f, 0.025f));
+
+        laser.shader.setModel(laser1);
+        laser.draw();
+
+        glm::mat4 laser2 = IDENTITY;
+        translate(laser2, Y_AXIS - 2.0f * Z_AXIS);
+        translate(laser2, -0.75f * Y_AXIS - 5.0f * Z_AXIS);
+        translate(laser2, -Z_AXIS * 5.0f * cosf(2 * currentTime));
+        translate(laser2, Y_AXIS);
+        scale(laser2, glm::vec3(8.0f, 0.025f, 0.025f));
+
+        laser.shader.setModel(laser2);
+        laser.draw();
+
+        glm::mat4 laser3 = IDENTITY;
+        translate(laser3, Y_AXIS - 2.0f * Z_AXIS);
+        translate(laser3, -0.75f * Y_AXIS - 5.0f * Z_AXIS);
+        translate(laser3, -Z_AXIS * 5.0f * ((sinf(2 * currentTime) + cosf(2 * currentTime)) / 2));
+        translate(laser3, 1.5f * Y_AXIS);
+        scale(laser3, glm::vec3(8.0f, 0.025f, 0.025f));
+
+        laser.shader.setModel(laser3);
+        laser.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
