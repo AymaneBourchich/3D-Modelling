@@ -15,28 +15,8 @@
 #include "CubeMap.hpp"
 #include "MaterialData.hpp"
 #include "LightData.hpp"
+#include "models.hpp"
 
-void translate(glm::mat4 &model, glm::vec3 value)
-{
-    model = glm::translate(model, value);
-}
-
-void rotate(glm::mat4 &model, float angle, glm::vec3 axis)
-{
-    model = glm::rotate(model, angle, axis);
-}
-
-void rotateAroundPivot(glm::mat4 &model, float angle, glm::vec3 axis, glm::vec3 pivot)
-{
-    translate(model, pivot);
-    rotate(model, angle, axis);
-    translate(model, -pivot);
-}
-
-void scale(glm::mat4 &model, glm::vec3 value)
-{
-    model = glm::scale(model, value);
-}
 
 std::array<std::string, 6> getCubemap(std::string folderName)
 {
@@ -86,6 +66,7 @@ int main()
     Texture texBox("textures/box.jpg");
     Texture texBoxSpec("textures/boxSpec.jpg");
     Texture texSoil("textures/soil.jpg");
+    Texture texFloor("textures/floor.jpg");
     Texture texConcrete("textures/rebar.jpg");
 
     CubeMap CubeMap(getCubemap("greySky"));
@@ -93,7 +74,7 @@ int main()
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape floor(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape quad(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
+    Shape wall(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape box(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
     Shape tower(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
     Shape blade(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
@@ -152,10 +133,10 @@ int main()
         floor.shader.setModel(floorModel);
 
         floor.shader.setInt("material.diffuse", 0);
-        texSoil.bind(0);
+        texFloor.bind(0);
 
         floor.shader.setInt("material.specular", 1);
-        texSoil.bind(1);
+        texFloor.bind(1);
 
         floor.shader.setFloat("material.shininess", 16.0f);
         floor.draw();
@@ -174,7 +155,7 @@ int main()
 
         box.shader.setFloat("material.shininess", 32.0f);
         
-        box.draw();
+        //box.draw();
 
         //-------------------TOWER--------------//
 
@@ -189,7 +170,7 @@ int main()
         tower.shader.setInt("material.specular", 1);
         texConcrete.bind(1);
 
-        tower.draw();
+        //tower.draw();
 
         //----------------------BLADES--------------//
 
@@ -208,14 +189,46 @@ int main()
         blade.shader.setInt("material.specular", 1);
         texBoxSpec.bind(1);
 
-        blade.draw();
+        //blade.draw();
 
         glm::mat4 bladeModel2 = baseBladeModel;
         rotate(bladeModel2, glm::radians(90.0f), Z_AXIS);
         scale(bladeModel2, glm::vec3(3.0f, 0.2f, 0.2f));
 
         blade.shader.setMVP(bladeModel2, view, proj);
-        blade.draw();
+        //blade.draw();
+
+        //-------------------------//
+        wall.shader.setInt("material.diffuse", 0);
+        texFloor.bind(0);
+        wall.shader.setInt("material.specular", 1);
+        texFloor.bind(1);
+
+        glm::mat4 wallModelBase = glm::translate(IDENTITY, Y_AXIS);
+        scale(wallModelBase, glm::vec3(7.0f, 3.0f, 20.0f));
+        
+        glm::mat4 wallModel1 = wallModelBase;
+        wall.shader.setModel(wallModel1);
+        wall.draw();
+
+        glm::mat4 wallModel2 = wallModelBase;
+        rotateAroundPivot(wallModel2, glm::radians(90.0f), Y_AXIS, glm::vec3(-0.5f, -0.5f, 0.0f));
+        wall.shader.setModel(wallModel2);
+        wall.draw();
+
+        glm::mat4 wallModel3 = wallModelBase;
+        rotateAroundPivot(wallModel3, glm::radians(-90.0f), Y_AXIS, glm::vec3(0.5f, -0.5f, 0.0f));
+        wall.shader.setModel(wallModel3);
+        wall.draw();
+
+        glm::mat4 wallModel4 = wallModelBase;
+        translate(wallModel4, -Z_AXIS);
+        wall.shader.setModel(wallModel4);
+        wall.draw();
+
+        
+
+        wall.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
