@@ -72,12 +72,11 @@ int main()
 
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape floor(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape stick(shaderBasic, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape wall(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
     Shape box(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
     Shape tower(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
     Shape blade(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
-    Shape laser(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+    Shape turret(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     Shape sky(shaderMap, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
@@ -101,7 +100,7 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        float WORLD_ROTATION_ANGLE = log(currentTime);
+        float WORLD_ROTATION_ANGLE = logf(currentTime);
         glm::mat4 WORLD_ROTATION = glm::rotate(IDENTITY, WORLD_ROTATION_ANGLE, Y_AXIS);
 
         glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
@@ -116,6 +115,11 @@ int main()
         shaderLight.setView(view);
         shaderLight.setProj(proj);
 
+        shaderBasic.use();
+        shaderBasic.setColor(sinf(5 * currentTime) * Colors::red);
+        shaderBasic.setView(view);
+        shaderBasic.setProj(proj);
+
         //-----------------------------------------//
         glDepthMask(GL_FALSE);
         glm::mat4 skyModel = WORLD_ROTATION;
@@ -127,11 +131,6 @@ int main()
 
         //-----------DRAWING FLOOR------------------/
 
-        glm::mat4 floorModel = IDENTITY;
-        rotate(floorModel, glm::radians(90.0f), X_AXIS);
-        scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
-        floor.shader.setModel(floorModel);
-
         floor.shader.setInt("material.diffuse", 0);
         texFloor.bind(0);
 
@@ -139,132 +138,53 @@ int main()
         texFloor.bind(1);
 
         floor.shader.setFloat("material.shininess", 16.0f);
+
+        glm::mat4 floorModel = IDENTITY;
+        translate(floorModel, -0.5f * Y_AXIS);
+        rotate(floorModel, glm::radians(90.0f), X_AXIS);
+        scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
+        floor.shader.setModel(floorModel);
+
         floor.draw();
 
-        //-------------------------BOX---------------------//
-        glm::mat4 boxModel = IDENTITY;
-        translate(boxModel, 0.5f * Y_AXIS - 4.0f * Z_AXIS);
-        rotate(boxModel, glm::radians(30.0f), Y_AXIS);
-        box.shader.setModel(boxModel);
-
+        //--------------------------------------------------//
         box.shader.setInt("material.diffuse", 0);
         texBox.bind(0);
-
         box.shader.setInt("material.specular", 1);
         texBoxSpec.bind(1);
+        box.shader.setFloat("material.shininess", 16.0f);
 
-        box.shader.setFloat("material.shininess", 32.0f);
+        glm::mat4 doorModel = IDENTITY;
 
-        // box.draw();
 
-        //-------------------TOWER--------------//
+        // translate(doorModel, -0.5f * X_AXIS);
+        // rotate(doorModel, sinf(currentTime), Y_AXIS);
+        // translate(doorModel, 0.5f * X_AXIS);
 
-        glm::mat4 towerModel = IDENTITY;
-        translate(towerModel, -Z_AXIS + Y_AXIS);
-        scale(towerModel, glm::vec3(0.5f, 5.0f, 0.5f));
-        tower.shader.setMVP(towerModel, view, proj);
+        translate(doorModel, -0.5f * Y_AXIS);
+        scale(doorModel, glm::vec3(1.0f, 4.0f, 0.2f));
+        translate(doorModel, 0.5f * Y_AXIS);
 
-        tower.shader.setInt("material.diffuse", 0);
-        texConcrete.bind(0);
+        box.shader.setModel(doorModel);
+        box.draw();
 
-        tower.shader.setInt("material.specular", 1);
-        texConcrete.bind(1);
-
-        // tower.draw();
-
-        //----------------------BLADES--------------//
-
-        glm::mat4 baseBladeModel = IDENTITY;
-        translate(baseBladeModel, -1.5f * Z_AXIS + 3.5f * Y_AXIS);
-        rotate(baseBladeModel, currentTime, Z_AXIS);
-
-        glm::mat4 bladeModel1 = baseBladeModel;
-        scale(bladeModel1, glm::vec3(3.0f, 0.2f, 0.2f));
-
-        blade.shader.use();
-        blade.shader.setModel(bladeModel1);
-
-        blade.shader.setInt("material.diffuse", 0);
-        texBox.bind(0);
-        blade.shader.setInt("material.specular", 1);
-        texBoxSpec.bind(1);
-
-        // blade.draw();
-
-        glm::mat4 bladeModel2 = baseBladeModel;
-        rotate(bladeModel2, glm::radians(90.0f), Z_AXIS);
-        scale(bladeModel2, glm::vec3(3.0f, 0.2f, 0.2f));
-
-        blade.shader.setMVP(bladeModel2, view, proj);
-        // blade.draw();
-
-        //-------------------------//
-        wall.shader.setInt("material.diffuse", 0);
+        //-----------------------------//
+        box.shader.setInt("material.diffuse", 0);
         texFloor.bind(0);
-        wall.shader.setInt("material.specular", 1);
+        box.shader.setInt("material.specular", 1);
         texFloor.bind(1);
+        box.shader.setFloat("material.shininess", 16.0f);
 
-        glm::mat4 wallModelBase = glm::translate(IDENTITY, Y_AXIS);
-        scale(wallModelBase, glm::vec3(7.0f, 3.0f, 20.0f));
+        glm::mat4 handleModel = IDENTITY;
 
-        glm::mat4 wallModel1 = wallModelBase;
-        wall.shader.setModel(wallModel1);
-        wall.draw();
+        translate(handleModel, glm::vec3(-0.9f, 2.0f, 0.2f));
 
-        glm::mat4 wallModel2 = wallModelBase;
-        rotateAroundPivot(wallModel2, glm::radians(90.0f), Y_AXIS, glm::vec3(-0.5f, -0.5f, 0.0f));
-        wall.shader.setModel(wallModel2);
-        wall.draw();
+        translate(handleModel, 0.5f * X_AXIS);
+        scale(handleModel, glm::vec3(0.5f, 0.1f, 0.1f));
+        translate(handleModel, 0.5f * X_AXIS);
 
-        glm::mat4 wallModel3 = wallModelBase;
-        rotateAroundPivot(wallModel3, glm::radians(-90.0f), Y_AXIS, glm::vec3(0.5f, -0.5f, 0.0f));
-        wall.shader.setModel(wallModel3);
-        wall.draw();
-
-        glm::mat4 wallModel4 = wallModelBase;
-        translate(wallModel4, -Z_AXIS);
-        wall.shader.setModel(wallModel4);
-        wall.draw();
-
-        glm::mat4 roofModel = wallModelBase;
-        rotateAroundPivot(roofModel, glm::radians(90.0f), X_AXIS, glm::vec3(-0.5f, 0.5f, 0.0f));
-        wall.shader.setModel(roofModel);
-        wall.draw();
-
-        //--------------------------//
-        laser.shader.use();
-        laser.shader.setColor(Colors::red);
-        laser.shader.setView(view);
-        laser.shader.setProj(proj);
-
-        glm::mat4 laser1 = IDENTITY;
-        translate(laser1, Y_AXIS - 2.0f * Z_AXIS);
-        translate(laser1, -0.75f * Y_AXIS - 5.0f * Z_AXIS);
-        translate(laser1, -Z_AXIS * 5.0f * sinf(2 * currentTime));
-        scale(laser1, glm::vec3(8.0f, 0.025f, 0.025f));
-
-        laser.shader.setModel(laser1);
-        laser.draw();
-
-        glm::mat4 laser2 = IDENTITY;
-        translate(laser2, Y_AXIS - 2.0f * Z_AXIS);
-        translate(laser2, -0.75f * Y_AXIS - 5.0f * Z_AXIS);
-        translate(laser2, -Z_AXIS * 5.0f * cosf(2 * currentTime));
-        translate(laser2, Y_AXIS);
-        scale(laser2, glm::vec3(8.0f, 0.025f, 0.025f));
-
-        laser.shader.setModel(laser2);
-        laser.draw();
-
-        glm::mat4 laser3 = IDENTITY;
-        translate(laser3, Y_AXIS - 2.0f * Z_AXIS);
-        translate(laser3, -0.75f * Y_AXIS - 5.0f * Z_AXIS);
-        translate(laser3, -Z_AXIS * 5.0f * ((sinf(2 * currentTime) + cosf(2 * currentTime)) / 2));
-        translate(laser3, 1.5f * Y_AXIS);
-        scale(laser3, glm::vec3(8.0f, 0.025f, 0.025f));
-
-        laser.shader.setModel(laser3);
-        laser.draw();
+        box.shader.setModel(handleModel);
+        box.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
