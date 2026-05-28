@@ -16,6 +16,7 @@
 #include "MaterialData.hpp"
 #include "LightData.hpp"
 #include "models.hpp"
+#include <math.h>
 
 std::array<std::string, 6> getCubemap(std::string folderName)
 {
@@ -156,13 +157,13 @@ int main()
 
         glm::mat4 doorModel = IDENTITY;
 
+        translate(doorModel, -0.2f * Z_AXIS);
 
         // translate(doorModel, -0.5f * X_AXIS);
         // rotate(doorModel, sinf(currentTime), Y_AXIS);
         // translate(doorModel, 0.5f * X_AXIS);
 
-        translate(doorModel, -0.5f * Y_AXIS);
-        scale(doorModel, glm::vec3(1.0f, 4.0f, 0.2f));
+        scale(doorModel, glm::vec3(1.0f, 4.0f, 0.1f));
         translate(doorModel, 0.5f * Y_AXIS);
 
         box.shader.setModel(doorModel);
@@ -177,10 +178,16 @@ int main()
 
         glm::mat4 handleModel = IDENTITY;
 
-        translate(handleModel, glm::vec3(-0.9f, 2.0f, 0.2f));
+        translate(handleModel, -0.35f * X_AXIS + 2.0f * Y_AXIS);
 
-        translate(handleModel, 0.5f * X_AXIS);
-        scale(handleModel, glm::vec3(0.5f, 0.1f, 0.1f));
+        float rawAngle = sinf(currentTime);
+        float constrainedAngle = std::clamp(rawAngle, 0.0f, glm::radians(30.0f));
+        rotate(handleModel, constrainedAngle, -Z_AXIS);
+
+        scale(handleModel, glm::vec3(1.0f, 0.0625f, 1.0f));
+        translate(handleModel, 0.5f * Y_AXIS);
+
+        scale(handleModel, glm::vec3(0.25f, 1.0f, 0.005f));
         translate(handleModel, 0.5f * X_AXIS);
 
         box.shader.setModel(handleModel);
