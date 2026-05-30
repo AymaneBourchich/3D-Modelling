@@ -41,6 +41,16 @@ static void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 }
 
+inline glm::mat4 move(float x = 0, float y = 0, float z = 0)
+{
+    return glm::translate(IDENTITY, glm::vec3(x, y, z));
+}
+
+inline glm::mat4 rotate(float angle, glm::vec3 axis = Y_AXIS)
+{
+    return glm::rotate(IDENTITY, angle, axis);
+}
+
 int main()
 {
     glfwInit();
@@ -88,9 +98,9 @@ int main()
 
     while (!glfwWindowShouldClose(globalWindow))
     {
-        float currentTime = glfwGetTime();
-        float deltaTime = currentTime - prevTime;
-        prevTime = currentTime;
+        float VAR = glfwGetTime();
+        float deltaTime = VAR - prevTime;
+        prevTime = VAR;
         processInput(globalWindow);
 
         camera.processKeyboardInput(deltaTime);
@@ -101,7 +111,7 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        float WORLD_ROTATION_ANGLE = logf(currentTime);
+        float WORLD_ROTATION_ANGLE = logf(VAR);
         glm::mat4 WORLD_ROTATION = glm::rotate(IDENTITY, WORLD_ROTATION_ANGLE, Y_AXIS);
 
         glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
@@ -117,7 +127,7 @@ int main()
         shaderLight.setProj(proj);
 
         shaderBasic.use();
-        shaderBasic.setColor(sinf(5 * currentTime) * Colors::red);
+        shaderBasic.setColor(sinf(5 * VAR) * Colors::red);
         shaderBasic.setView(view);
         shaderBasic.setProj(proj);
 
@@ -150,48 +160,92 @@ int main()
 
         //--------------------------------------------------//
         box.shader.setInt("material.diffuse", 0);
-        texBox.bind(0);
-        box.shader.setInt("material.specular", 1);
-        texBoxSpec.bind(1);
-        box.shader.setFloat("material.shininess", 16.0f);
-
-        glm::mat4 doorModel = IDENTITY;
-
-        translate(doorModel, -0.2f * Z_AXIS);
-
-        // translate(doorModel, -0.5f * X_AXIS);
-        // rotate(doorModel, sinf(currentTime), Y_AXIS);
-        // translate(doorModel, 0.5f * X_AXIS);
-
-        scale(doorModel, glm::vec3(1.0f, 4.0f, 0.1f));
-        translate(doorModel, 0.5f * Y_AXIS);
-
-        box.shader.setModel(doorModel);
-        box.draw();
-
-        //-----------------------------//
-        box.shader.setInt("material.diffuse", 0);
         texFloor.bind(0);
         box.shader.setInt("material.specular", 1);
         texFloor.bind(1);
         box.shader.setFloat("material.shininess", 16.0f);
 
-        glm::mat4 handleModel = IDENTITY;
+        glm::mat4 shift = glm::translate(IDENTITY, glm::vec3(0, 4, 0));
+        // rotate(shift, currentTime, Y_AXIS);
 
-        translate(handleModel, -0.35f * X_AXIS + 2.0f * Y_AXIS);
+        glm::mat4 arm1 = IDENTITY;
 
-        float rawAngle = sinf(currentTime);
-        float constrainedAngle = std::clamp(rawAngle, 0.0f, glm::radians(30.0f));
-        rotate(handleModel, constrainedAngle, -Z_AXIS);
+        scale(arm1, glm::vec3(4.0f, 1.0f, 1.0f));
+        translate(arm1, -0.5f * X_AXIS);
 
-        scale(handleModel, glm::vec3(1.0f, 0.0625f, 1.0f));
-        translate(handleModel, 0.5f * Y_AXIS);
-
-        scale(handleModel, glm::vec3(0.25f, 1.0f, 0.005f));
-        translate(handleModel, 0.5f * X_AXIS);
-
-        box.shader.setModel(handleModel);
+        box.shader.setModel(shift * arm1);
         box.draw();
+
+        glm::mat4 arm2 = IDENTITY;
+
+        translate(arm2, glm::vec3(0, -0.5f, -0.5f));
+        rotate(arm2, glm::radians(90.0f), Y_AXIS);
+        translate(arm2, glm::vec3(0, 0.5f, 0.5f));
+
+        box.shader.setModel(shift * arm2 * arm1);
+        box.draw();
+
+        glm::mat4 arm3 = IDENTITY;
+        translate(arm3, glm::vec3(5.0f, -0.0f, 0.0f));
+        box.shader.setModel(shift * arm3 * arm1);
+        box.draw();
+
+        glm::mat4 arm4 = IDENTITY;
+        translate(arm4, glm::vec3(0.0f, -0.0f, -4.0f));
+        box.shader.setModel(shift * arm4 * arm2 * arm1);
+        box.draw();
+
+        glm::mat4 column1 = IDENTITY;
+
+        translate(column1, glm::vec3(-4.0f, 0.5f, 0.0f));
+        rotate(column1, glm::radians(90.0f), -Z_AXIS);
+        translate(column1, glm::vec3(4.0f, -0.5f, 0.0f));
+        box.shader.setModel(shift * column1 * arm1);
+        box.draw();
+
+        glm::mat4 column2 = IDENTITY;
+        translate(column2, glm::vec3(1.0f, 0.5f, -0.5f));
+        rotate(column2, glm::radians(90.0f), Y_AXIS);
+        translate(column2, glm::vec3(0.0f, -0.5f, -0.5f));
+        box.shader.setModel(shift * column2 * column1 * arm1);
+        box.draw();
+
+        glm::mat4 column3 = IDENTITY;
+        translate(column3, glm::vec3(9.0f, -0.0f, -0.0f));
+        box.shader.setModel(shift * column3 * column1 * arm1);
+        box.draw();
+
+        glm::mat4 column4 = IDENTITY;
+        translate(column4, glm::vec3(0.0f, -0.0f, -8.0f));
+        box.shader.setModel(shift * column4 * column2 * column1 * arm1);
+        box.draw();
+
+        //-----------------------------------------///
+
+        glm::mat4 laserBase = IDENTITY;
+
+        translate(laserBase, glm::vec3(0.5f, 0.5f, 0.0f));
+
+        rotate(laserBase, VAR, Y_AXIS);
+
+        translate(laserBase, glm::vec3(0.0, 0.0, -4.0));
+        scale(laserBase, glm::vec3(0.05f, 0.1f, 4.0f));
+        translate(laserBase, glm::vec3(0.5, 0.5, 0.5));
+
+        turret.shader.setModel(shift * laserBase);
+        // turret.draw();
+
+        turret.shader.setModel(move(4) * shift * laserBase);
+        turret.draw();
+
+        turret.shader.setModel(move(-4) * shift * laserBase);
+        turret.draw();
+
+        turret.shader.setModel(move(0, 0, 4) * shift * laserBase);
+        turret.draw();
+
+        turret.shader.setModel(move(0, 0, -4) * shift * laserBase);
+        turret.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

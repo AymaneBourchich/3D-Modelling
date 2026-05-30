@@ -13,12 +13,14 @@ def printQuad(vertices: np.ndarray) -> None:
     def formatVertex(vertex: np.ndarray) -> str:
         x = vertex[0]
         y = vertex[1]
-        return f"({x:6.2f}, {y:6.2f})"
+        z = vertex[2]
+        return f"({x:6.2f}, {y:6.2f}, {z:6.2f})"
 
     x1 = formatVertex(vertices[0])
     x2 = formatVertex(vertices[1])
     x3 = formatVertex(vertices[2])
     x4 = formatVertex(vertices[3])
+
 
     print(f"{x1}   |     {x2}")
     print("----------------------------------------------")
@@ -30,10 +32,10 @@ def printQuad(vertices: np.ndarray) -> None:
 # 1. Define square centered at origin (Each row is a vertex: shape 4x4)
 vertices = np.array(
     [
-        [-0.5, 0.5, 0.0, 1.0],  # Top-left
-        [0.5, 0.5, 0.0, 1.0],  # Top-right
-        [-0.5, -0.5, 0.0, 1.0],  # Bottom-left
-        [0.5, -0.5, 0.0, 1.0],  # Bottom-right
+        [-0.5, 0.5, 0.5, 1.0],  # Top-left
+        [0.5, 0.5, 0.5, 1.0],  # Top-right
+        [-0.5, -0.5, 0.5, 1.0],  # Bottom-left
+        [0.5, -0.5, 0.5, 1.0],  # Bottom-right
     ]
 )
 
@@ -76,12 +78,13 @@ def scale(vertices, x, y, z):
 
 # 3. Transform using Row Vector notation: Vertices @ Translate.T
 # (Shape: 4x4 @ 4x4 = 4x4)
+# translate(laser, -glm::vec3(0.5, 0.5, 0.5));
+#         scale(laser, glm::vec3(0.25f, 2.0f, 4.0f));
+#         translate(laser, glm::vec3(0.5, 0.5, 0.5));
 
 print("BEGIN:")
 x = vertices
 printQuad(x)
-x = translate(x, 0.5, 0, 0)
-x = scale(x, 0.25, 1, 1.0)
-x = translate(x, 0, 0.5, 0)
-x = scale(x, 1, 0.0625, 1.0)
-x = translate(x, -0.35, 2, 0)
+x = translate(x, 0.5, 0.5, 0.5)
+x = scale(x, 0.25, 2.0, 4.0)
+
