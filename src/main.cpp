@@ -79,15 +79,11 @@ int main()
     Texture texFloor("textures/metal.jpg");
     Texture texConcrete("textures/rebar.jpg");
 
-    CubeMap CubeMap(getCubemap("greySky"));
+    CubeMap CubeMap(getCubemap("redSky"));
 
     Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
     Shape floor(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape wall(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape box(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
-    Shape tower(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
-    Shape blade(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
-    Shape turret(shaderBasic, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+    Shape skyBox(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     Shape sky(shaderMap, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
@@ -111,141 +107,41 @@ int main()
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        float WORLD_ROTATION_ANGLE = logf(VAR);
-        glm::mat4 WORLD_ROTATION = glm::rotate(IDENTITY, WORLD_ROTATION_ANGLE, Y_AXIS);
 
         glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
-        SUN_POSITION = glm::vec3(WORLD_ROTATION * glm::vec4(SUN_POSITION, 1.0f));
 
         shaderLight.use();
         shaderLight.setVec3("light.direction", SUN_POSITION);
-        shaderLight.setVec3("light.ambient", lights[LightName::OVERCAST_DAY].ambient);
-        shaderLight.setVec3("light.diffuse", lights[LightName::OVERCAST_DAY].diffuse);
-        shaderLight.setVec3("light.specular", lights[LightName::OVERCAST_DAY].specular);
+        shaderLight.setVec3("light.ambient", lights[LightName::SUNSET].ambient);
+        shaderLight.setVec3("light.diffuse", lights[LightName::SUNSET].diffuse);
+        shaderLight.setVec3("light.specular", lights[LightName::SUNSET].specular);
 
         shaderLight.setView(view);
         shaderLight.setProj(proj);
 
+        float freq = 5.0f;
+
+
+        float r = (sinf(freq * VAR) + 1.0f) * 0.5f;
+        float g = (sinf(freq * VAR + 2.094f) + 1.0f) * 0.5f;
+        float b = (sinf(freq * VAR + 4.188f) + 1.0f) * 0.5f;
+
+        // Apply the new color
+
         shaderBasic.use();
-        shaderBasic.setColor(sinf(5 * VAR) * Colors::red);
+        shaderBasic.setColor(glm::vec4(r, g, b, sinf(VAR)));
         shaderBasic.setView(view);
         shaderBasic.setProj(proj);
 
         //-----------------------------------------//
+        shaderMap.use();
         glDepthMask(GL_FALSE);
-        glm::mat4 skyModel = WORLD_ROTATION;
-        rotate(skyModel, glm::radians(90.0f), Y_AXIS);
-        sky.shader.setMVP(skyModel, glm::mat4(glm::mat3(view)), proj);
+        sky.shader.setMVP(IDENTITY, glm::mat4(glm::mat3(view)), proj);
         CubeMap.bind();
         sky.draw();
         glDepthMask(GL_TRUE);
 
         //-----------DRAWING FLOOR------------------/
-
-        floor.shader.setInt("material.diffuse", 0);
-        texFloor.bind(0);
-
-        floor.shader.setInt("material.specular", 1);
-        texFloor.bind(1);
-
-        floor.shader.setFloat("material.shininess", 16.0f);
-
-        glm::mat4 floorModel = IDENTITY;
-        translate(floorModel, -0.5f * Y_AXIS);
-        rotate(floorModel, glm::radians(90.0f), X_AXIS);
-        scale(floorModel, glm::vec3(100.0f, 100.0f, 100.0f));
-        floor.shader.setModel(floorModel);
-
-        floor.draw();
-
-        //--------------------------------------------------//
-        box.shader.setInt("material.diffuse", 0);
-        texFloor.bind(0);
-        box.shader.setInt("material.specular", 1);
-        texFloor.bind(1);
-        box.shader.setFloat("material.shininess", 16.0f);
-
-        glm::mat4 shift = glm::translate(IDENTITY, glm::vec3(0, 4, 0));
-        // rotate(shift, currentTime, Y_AXIS);
-
-        glm::mat4 arm1 = IDENTITY;
-
-        scale(arm1, glm::vec3(4.0f, 1.0f, 1.0f));
-        translate(arm1, -0.5f * X_AXIS);
-
-        box.shader.setModel(shift * arm1);
-        box.draw();
-
-        glm::mat4 arm2 = IDENTITY;
-
-        translate(arm2, glm::vec3(0, -0.5f, -0.5f));
-        rotate(arm2, glm::radians(90.0f), Y_AXIS);
-        translate(arm2, glm::vec3(0, 0.5f, 0.5f));
-
-        box.shader.setModel(shift * arm2 * arm1);
-        box.draw();
-
-        glm::mat4 arm3 = IDENTITY;
-        translate(arm3, glm::vec3(5.0f, -0.0f, 0.0f));
-        box.shader.setModel(shift * arm3 * arm1);
-        box.draw();
-
-        glm::mat4 arm4 = IDENTITY;
-        translate(arm4, glm::vec3(0.0f, -0.0f, -4.0f));
-        box.shader.setModel(shift * arm4 * arm2 * arm1);
-        box.draw();
-
-        glm::mat4 column1 = IDENTITY;
-
-        translate(column1, glm::vec3(-4.0f, 0.5f, 0.0f));
-        rotate(column1, glm::radians(90.0f), -Z_AXIS);
-        translate(column1, glm::vec3(4.0f, -0.5f, 0.0f));
-        box.shader.setModel(shift * column1 * arm1);
-        box.draw();
-
-        glm::mat4 column2 = IDENTITY;
-        translate(column2, glm::vec3(1.0f, 0.5f, -0.5f));
-        rotate(column2, glm::radians(90.0f), Y_AXIS);
-        translate(column2, glm::vec3(0.0f, -0.5f, -0.5f));
-        box.shader.setModel(shift * column2 * column1 * arm1);
-        box.draw();
-
-        glm::mat4 column3 = IDENTITY;
-        translate(column3, glm::vec3(9.0f, -0.0f, -0.0f));
-        box.shader.setModel(shift * column3 * column1 * arm1);
-        box.draw();
-
-        glm::mat4 column4 = IDENTITY;
-        translate(column4, glm::vec3(0.0f, -0.0f, -8.0f));
-        box.shader.setModel(shift * column4 * column2 * column1 * arm1);
-        box.draw();
-
-        //-----------------------------------------///
-
-        glm::mat4 laserBase = IDENTITY;
-
-        translate(laserBase, glm::vec3(0.5f, 0.5f, 0.0f));
-
-        rotate(laserBase, VAR, Y_AXIS);
-
-        translate(laserBase, glm::vec3(0.0, 0.0, -4.0));
-        scale(laserBase, glm::vec3(0.05f, 0.1f, 4.0f));
-        translate(laserBase, glm::vec3(0.5, 0.5, 0.5));
-
-        turret.shader.setModel(shift * laserBase);
-        // turret.draw();
-
-        turret.shader.setModel(move(4) * shift * laserBase);
-        turret.draw();
-
-        turret.shader.setModel(move(-4) * shift * laserBase);
-        turret.draw();
-
-        turret.shader.setModel(move(0, 0, 4) * shift * laserBase);
-        turret.draw();
-
-        turret.shader.setModel(move(0, 0, -4) * shift * laserBase);
-        turret.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
