@@ -104,4 +104,4 @@ std::map<LightName, Light> lights = {
 };
 
 DirLight DEFAULT_DIR = DirLight(glm::vec3(0.0f, -1.0f, 0.0f));
-PointLight DEFAULT_POINT = PointLight(glm::vec3(0.0f, 1.0f, 0.0f), lights[LightName::CANDLE]); //draw a cube in that position
+PointLight DEFAULT_POINT = PointLight(glm::vec3(0.0f, 2.0f, 0.0f), lights[LightName::CANDLE]); //draw a cube in that position
