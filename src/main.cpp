@@ -13,9 +13,9 @@
 #include "Shape.hpp"
 #include "GeometryData.hpp"
 #include "CubeMap.hpp"
-#include "MaterialData.hpp"
 #include "Light.hpp"
 #include "models.hpp"
+#include "MaterialData.hpp"
 #include <math.h>
 
 std::array<std::string, 6> getCubemap(std::string folderName);
@@ -49,10 +49,11 @@ int main()
     Camera camera;
     globalCamera = &camera;
 
-    Shader shaderBasic("shaders/basic.vert", "shaders/basic.frag");
-    Shader shaderTex("shaders/texture.vert", "shaders/texture.frag");
-    Shader shaderMap("shaders/cubemap.vert", "shaders/cubemap.frag");
-    Shader shaderLight("shaders/light.vert", "shaders/light.frag");
+    Shader basicShader("shaders/basic.vert", "shaders/basic.frag");
+    Shader texShader("shaders/texture.vert", "shaders/texture.frag");
+    Shader skyBoxShader("shaders/cubemap.vert", "shaders/cubemap.frag");
+    Shader lightShader("shaders/light.vert", "shaders/light.frag");
+    Shader materialShader("shaders/material.vert", "shaders/material.frag");
 
     Texture texBox("textures/box.jpg");
     Texture texBoxSpec("textures/boxSpec.jpg");
@@ -62,11 +63,9 @@ int main()
 
     CubeMap cubeMap(getCubemap("redNebula/1"));
 
-    Shape triangle(shaderTex, Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
-    Shape floor(shaderLight, Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape skyBox(shaderLight, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
-
-    Shape sky(shaderMap, Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
+    Shape triangle(Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
+    Shape quad(Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
+    Shape cube(Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     glfwSetCursorPosCallback(globalWindow, mouseCallback);
     glfwSetInputMode(globalWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -88,20 +87,22 @@ int main()
         glm::mat4 VIEW = camera.getViewMatrix();
         glm::mat4 PROJ = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-        glm::vec3 SUN_POSITION = glm::vec3(0.0f, -13.0f, 25.0f);
-
-        shaderLight.setVec3("dirLight.direction", -Y_AXIS);
-        shaderLight.setVec3("dirLight.ambient", -Y_AXIS);
-        shaderLight.setVec3("dirLight.diffuse", -Y_AXIS);
-        shaderLight.setVec3("dirLight.specular", -Y_AXIS);
+        //-----------------------------------------//
+        skyBoxShader.use();
+        glDepthMask(GL_FALSE);
+        skyBoxShader.setMVP(IDENTITY, glm::mat4(glm::mat3(VIEW)), PROJ);
+        cubeMap.bind();
+        cube.draw();
+        glDepthMask(GL_TRUE);
 
         //-----------------------------------------//
-        shaderMap.use();
-        glDepthMask(GL_FALSE);
-        sky.shader.setMVP(IDENTITY, glm::mat4(glm::mat3(VIEW)), PROJ);
-        cubeMap.bind();
-        sky.draw();
-        glDepthMask(GL_TRUE);
+        materialShader.use();
+        materialShader.setMaterial(materials[MaterialName::CHROME]);
+
+        materialShader.setMVP(IDENTITY, VIEW, PROJ);
+
+        cube.draw();
+
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

@@ -14,3 +14,16 @@ struct Vertex
     void setTexCoord(const glm::vec2& t) { texCoord = t; }
     void setColor(const glm::vec4& c)    { color = c; }
 };
+
+struct Material {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float shininess;
+};
+
+struct Light {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+};

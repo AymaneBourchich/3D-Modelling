@@ -1,5 +1,5 @@
 #include <glm/glm.hpp>
-#include "LightData.hpp"
+#include "Vertex.hpp"
 #pragma once
 struct DirLight
 {

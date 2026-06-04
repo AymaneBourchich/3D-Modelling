@@ -2,6 +2,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include "Vertex.hpp"
 
 class Shader
 {
@@ -22,6 +23,8 @@ public:
     void setColor(const glm::vec4 &value) const;
 
     void setMVP(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj) const;
+
+    void setMaterial(const Material) const;
 
     void setInt(const std::string &name, int value) const;
     void setFloat(const std::string &name, float value) const;
