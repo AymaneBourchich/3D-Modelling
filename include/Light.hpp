@@ -1,6 +1,19 @@
 #include <glm/glm.hpp>
-#include "Vertex.hpp"
 #pragma once
+
+struct Material {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float shininess;
+};
+
+struct Light {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+};
+
 struct DirLight
 {
     DirLight(glm::vec3 direction) : direction(direction) {}
@@ -12,7 +25,7 @@ struct DirLight
     glm::vec3 direction = glm::vec3(0.0f, -1.0f, 1.0f);
 
     glm::vec3 ambient = glm::vec3(0.15f);
-    glm::vec3 diffuse = glm::vec3(0.80f);
+    glm::vec3 diffuse = glm::vec3(0.05f);
     glm::vec3 specular = glm::vec3(0.40f);
 };
 
@@ -51,5 +64,3 @@ struct SpotLight
     glm::vec3 specular = glm::vec3(1.20f);
 };
 
-DirLight DEFAULT_DIR = DirLight(glm::vec3(0.0f, -1.0f, 0.0f));
-PointLight DEFAULT_POINT = PointLight(glm::vec3(0.0f, 2.0f, 0.0f)); //draw a cube in that position

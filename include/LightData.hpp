@@ -3,7 +3,9 @@
 #include <map>
 #include <string>
 #include <glm/vec3.hpp>
-#include "Vertex.hpp"
+#include "Light.hpp"
+
+
 
 enum class LightName {
     SUN_NOON,
@@ -100,3 +102,6 @@ std::map<LightName, Light> lights = {
         }
     }
 };
+
+DirLight DEFAULT_DIR = DirLight(glm::vec3(0.0f, -1.0f, 0.0f));
+PointLight DEFAULT_POINT = PointLight(glm::vec3(0.0f, 1.0f, 0.0f), lights[LightName::CANDLE]); //draw a cube in that position

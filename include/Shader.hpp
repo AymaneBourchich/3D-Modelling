@@ -2,7 +2,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include "Vertex.hpp"
+#include "Light.hpp"
 
 class Shader
 {

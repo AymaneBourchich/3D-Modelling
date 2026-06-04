@@ -16,6 +16,7 @@
 #include "Light.hpp"
 #include "models.hpp"
 #include "MaterialData.hpp"
+#include "LightData.hpp"
 #include <math.h>
 
 std::array<std::string, 6> getCubemap(std::string folderName);
@@ -55,11 +56,8 @@ int main()
     Shader lightShader("shaders/light.vert", "shaders/light.frag");
     Shader materialShader("shaders/material.vert", "shaders/material.frag");
 
-    Texture texBox("textures/box.jpg");
-    Texture texBoxSpec("textures/boxSpec.jpg");
-    Texture texSoil("textures/soil.jpg");
-    Texture texFloor("textures/metal.jpg");
-    Texture texConcrete("textures/rebar.jpg");
+    Texture diffuseRockMap("textures/rock.jpg");
+    Texture specularRockMap("textures/rock_spec.jpg");
 
     CubeMap cubeMap(getCubemap("redNebula/1"));
 
@@ -98,11 +96,48 @@ int main()
         //-----------------------------------------//
         materialShader.use();
         materialShader.setMaterial(materials[MaterialName::CHROME]);
-
         materialShader.setMVP(IDENTITY, VIEW, PROJ);
-
+        materialShader.setModel(glm::translate(IDENTITY, glm::vec3(0.0f, 2.0f, 0.0f)));
         cube.draw();
 
+        //--------------------------------------------//
+        lightShader.use();
+        lightShader.setVec3("viewPos", camera.position);
+
+        lightShader.setInt("material.diffuse", 0);
+        diffuseRockMap.bind(0);
+        lightShader.setInt("material.specular", 1);
+        specularRockMap.bind(1);
+        lightShader.setFloat("material.shininess", 8.0f);
+
+        lightShader.setVec3("dirLight.direction", DEFAULT_DIR.direction);
+        lightShader.setVec3("dirLight.ambient", DEFAULT_DIR.ambient);
+        lightShader.setVec3("dirLight.diffuse", DEFAULT_DIR.diffuse);
+        lightShader.setVec3("dirLight.specular", DEFAULT_DIR.specular);
+
+
+
+        lightShader.setVec3("pointLight.position", DEFAULT_POINT.position);
+        lightShader.setVec3("pointLight.ambient", DEFAULT_POINT.ambient);
+        lightShader.setVec3("pointLight.diffuse", DEFAULT_POINT.diffuse);
+        lightShader.setVec3("pointLight.specular", DEFAULT_POINT.specular);
+        lightShader.setFloat("pointLight.constant", DEFAULT_POINT.constant);
+        lightShader.setFloat("pointLight.linear", DEFAULT_POINT.linear);
+        lightShader.setFloat("pointLight.quadratic", DEFAULT_POINT.quadratic);
+
+        glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(300.0f));
+
+        // Create the rotation matrix
+        glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // Combine them: Rotation * Scale
+        // The scaling happens first, and the rotation is applied to the scaled object
+        glm::mat4 model = rotate * scale;
+
+        // Apply to your shader
+        lightShader.setMVP(model, VIEW, PROJ);
+
+        quad.draw();
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

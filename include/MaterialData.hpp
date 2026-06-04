@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include <glm/vec3.hpp>
-#include "Vertex.hpp"
+#include "Light.hpp"
 
 enum class MaterialName {
     EMERALD,
