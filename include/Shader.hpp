@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "Light.hpp"
+#include "Texture.hpp"
 
 class Shader
 {
@@ -24,7 +25,12 @@ public:
 
     void setMVP(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &proj) const;
 
-    void setMaterial(const Material) const;
+    void setMaterial(const Material material) const;
+    void setDirLight(const DirLight dirLight) const;
+    void setPointLight(const PointLight pointLight) const;
+
+    void setDiffuseMap(const Texture &texture) const;
+    void setSpecularMap(const Texture &texture) const;
 
     void setInt(const std::string &name, int value) const;
     void setFloat(const std::string &name, float value) const;

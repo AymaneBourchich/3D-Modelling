@@ -114,6 +114,37 @@ void Shader::setMaterial(const Material material) const
     setFloat("material.shininess", material.shininess);
 }
 
+void Shader::setDirLight(const DirLight dirLight) const
+{
+    setVec3("dirLight.direction", dirLight.direction);
+    setVec3("dirLight.ambient", dirLight.ambient);
+    setVec3("dirLight.diffuse", dirLight.diffuse);
+    setVec3("dirLight.specular", dirLight.specular);
+}
+
+void Shader::setPointLight(const PointLight pointLight) const
+{
+    setVec3("pointLight.position", pointLight.position);
+    setVec3("pointLight.ambient", pointLight.ambient);
+    setVec3("pointLight.diffuse", pointLight.diffuse);
+    setVec3("pointLight.specular", pointLight.specular);
+    setFloat("pointLight.constant", pointLight.constant);
+    setFloat("pointLight.linear", pointLight.linear);
+    setFloat("pointLight.quadratic", pointLight.quadratic);
+}
+
+void Shader::setDiffuseMap(const Texture &texture) const
+{
+    setInt("material.diffuse", 0);
+    texture.bind(0);
+}
+
+void Shader::setSpecularMap(const Texture &texture) const
+{
+    setInt("material.specular", 1);
+    texture.bind(1);
+}
+
 void Shader::setFloat(const std::string &name, float value) const
 {
     glUniform1f(glGetUniformLocation(shaderProgramId, name.c_str()), value);
