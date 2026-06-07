@@ -17,7 +17,8 @@ enum class LightName {
     NEON_BLUE,
     CANDLE,
     NIGHT_MOON,
-    STUDIO_WHITE
+    STUDIO_WHITE,
+    RED_MOON
 };
 
 std::map<LightName, Light> lights = {
@@ -96,12 +97,21 @@ std::map<LightName, Light> lights = {
     {
         LightName::STUDIO_WHITE,
         {
-            glm::vec3(0.20f, 0.20f, 0.20f),
-            glm::vec3(1.00f, 1.00f, 1.00f),
-            glm::vec3(1.00f, 1.00f, 1.00f)
+            glm::vec3(0.00f, 0.00f, 0.00f),
+            glm::vec3(0.00f, 0.50f, 0.50f),
+            glm::vec3(0.20f, 0.20f, 0.20f)
+        }
+    },
+    {
+        LightName::RED_MOON,
+        {
+            glm::vec3(0.02f, 0.001f, 0.001f),
+            glm::vec3(0.2f, 0.02f, 0.02f),
+            glm::vec3(0.2f, 0.2f, 0.2f)
         }
     }
 };
 
-DirLight DEFAULT_DIR = DirLight(glm::vec3(0.0f, -1.0f, 0.0f));
-PointLight DEFAULT_POINT = PointLight(glm::vec3(0.0f, 2.0f, 0.0f), lights[LightName::CANDLE]); //draw a cube in that position
+DirLight DEFAULT_DIR = DirLight(glm::vec3(0.0f, -1.0f, 0.0f), lights[LightName::RED_MOON]);
+PointLight DEFAULT_POINT = PointLight(glm::vec3(0.0f, 1.0f, 0.0f), lights[LightName::STUDIO_WHITE]);
+SpotLight DEFAULT_SPOT = SpotLight(glm::vec3(-5.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), lights[LightName::STUDIO_WHITE]);

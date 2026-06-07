@@ -28,6 +28,7 @@ public:
     void setMaterial(const Material material) const;
     void setDirLight(const DirLight dirLight) const;
     void setPointLight(const PointLight pointLight) const;
+    void setSpotLight(const SpotLight spotLight) const;
 
     void setDiffuseMap(const Texture &texture) const;
     void setSpecularMap(const Texture &texture) const;

@@ -125,12 +125,31 @@ void Shader::setDirLight(const DirLight dirLight) const
 void Shader::setPointLight(const PointLight pointLight) const
 {
     setVec3("pointLight.position", pointLight.position);
+
     setVec3("pointLight.ambient", pointLight.ambient);
     setVec3("pointLight.diffuse", pointLight.diffuse);
     setVec3("pointLight.specular", pointLight.specular);
+
     setFloat("pointLight.constant", pointLight.constant);
     setFloat("pointLight.linear", pointLight.linear);
     setFloat("pointLight.quadratic", pointLight.quadratic);
+}
+
+void Shader::setSpotLight(const SpotLight spotLight) const
+{
+    setVec3("spotLight.position", spotLight.position);
+    setVec3("spotLight.direction", spotLight.direction);
+
+    setFloat("spotLight.cutOff", spotLight.cutOff);
+    setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
+
+    setFloat("spotLight.constant", spotLight.constant);
+    setFloat("spotLight.linear", spotLight.linear);
+    setFloat("spotLight.quadratic", spotLight.quadratic);
+
+    setVec3("spotLight.ambient", spotLight.ambient);
+    setVec3("spotLight.diffuse", spotLight.diffuse);
+    setVec3("spotLight.specular", spotLight.specular);
 }
 
 void Shader::setDiffuseMap(const Texture &texture) const

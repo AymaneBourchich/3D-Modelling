@@ -91,9 +91,13 @@ int main()
 
         //-----------------------------------------//
         materialShader.use();
-        materialShader.setMaterial(materials[MaterialName::CHROME]);
+        materialShader.setMaterial(materials[MaterialName::EMERALD]);
         materialShader.setMVP(IDENTITY, VIEW, PROJ);
-        materialShader.setModel(glm::translate(IDENTITY, glm::vec3(0.0f, 2.0f, 0.0f)));
+        glm::mat4 lightSource = IDENTITY;
+        translate(lightSource, DEFAULT_SPOT.position);
+        rotate(lightSource, VAR, Y_AXIS);
+        scale(lightSource, glm::vec3(0.5f, 0.5f, 0.5f));
+        materialShader.setModel(lightSource);
         cube.draw();
 
         //--------------------------------------------//
@@ -106,6 +110,7 @@ int main()
 
         lightShader.setDirLight(DEFAULT_DIR);
         lightShader.setPointLight(DEFAULT_POINT);
+        lightShader.setSpotLight(DEFAULT_SPOT);
 
         glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(300.0f));
 

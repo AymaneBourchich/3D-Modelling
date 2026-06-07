@@ -37,8 +37,8 @@ struct PointLight
     glm::vec3 position;
 
     float constant = 1.0;
-    float linear = 0.14;
-    float quadratic = 0.07;
+    float linear = 0.045;
+    float quadratic = 0.0075;
 
     glm::vec3 ambient = glm::vec3(0.02f);
     glm::vec3 diffuse = glm::vec3(0.70f);
@@ -52,12 +52,12 @@ struct SpotLight
     glm::vec3 position;
     glm::vec3 direction;
 
-    float cutOff = glm::cos(glm::radians(12.5f));
-    float outerCutOff = glm::cos(glm::radians(17.5f));
+    float cutOff = glm::cos(glm::radians(40.5f));
+    float outerCutOff = glm::cos(glm::radians(50.0f));
 
     float constant = 1.0;
-    float linear = 0.7;
-    float quadratic = 1.8;
+    float linear = 0.045;
+    float quadratic = 0.0075;
 
     glm::vec3 ambient = glm::vec3(0.00f);
     glm::vec3 diffuse = glm::vec3(1.00f);
