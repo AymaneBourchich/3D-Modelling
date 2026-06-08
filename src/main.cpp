@@ -93,12 +93,17 @@ int main()
         materialShader.use();
         materialShader.setMaterial(materials[MaterialName::EMERALD]);
         materialShader.setMVP(IDENTITY, VIEW, PROJ);
-        glm::mat4 lightSource = IDENTITY;
-        translate(lightSource, DEFAULT_SPOT.position);
-        rotate(lightSource, VAR, Y_AXIS);
-        scale(lightSource, glm::vec3(0.5f, 0.5f, 0.5f));
-        materialShader.setModel(lightSource);
-        cube.draw();
+        glm::mat4 translate, rotate, scale = IDENTITY;
+        translate = glm::translate(IDENTITY, DEFAULT_SPOT.position);
+        rotate = glm::rotate(IDENTITY, VAR, Y_AXIS);
+        scale = glm::scale(IDENTITY, glm::vec3(0.5f, 0.5f, 0.5f));
+
+        for (int i = 0; i < 7; i++)
+        {
+            translate = glm::translate(IDENTITY, POSITIONS[i]);
+            materialShader.setModel(translate * rotate * scale);
+            cube.draw();
+        }
 
         //--------------------------------------------//
         lightShader.use();
@@ -110,12 +115,17 @@ int main()
 
         lightShader.setDirLight(DEFAULT_DIR);
         lightShader.setPointLight(DEFAULT_POINT);
-        lightShader.setSpotLight(DEFAULT_SPOT);
 
-        glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(300.0f));
+        for (int i = 0; i < 7; i++)
+        {
+            DEFAULT_SPOT.position = POSITIONS[i];
+            lightShader.setSpotLight(DEFAULT_SPOT, i);
+        }
+
+        scale = glm::scale(glm::mat4(1.0f), glm::vec3(300.0f));
 
         // Create the rotation matrix
-        glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
         // Combine them: Rotation * Scale
         // The scaling happens first, and the rotation is applied to the scaled object
@@ -125,6 +135,21 @@ int main()
         lightShader.setMVP(model, VIEW, PROJ);
 
         quad.draw();
+
+        materialShader.use();
+        materialShader.setMaterial(materials[MaterialName::OBSIDIAN]);
+        translate = glm::translate(IDENTITY, glm::vec3(-5, 1, 3));
+
+        int n = 10;
+        float stepAngle = glm::two_pi<float>() / n;
+
+        for (int i = 0; i < n; i++)
+        {
+            rotate = glm::rotate(IDENTITY, stepAngle * i, Z_AXIS);
+            glm::mat4 selfRotate = glm::rotate(IDENTITY, 3 * VAR, Z_AXIS);
+            materialShader.setModel(translate * rotate * selfRotate);
+            quad.draw();
+        }
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

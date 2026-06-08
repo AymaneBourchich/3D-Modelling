@@ -53,7 +53,7 @@ struct SpotLight
     glm::vec3 direction;
 
     float cutOff = glm::cos(glm::radians(40.5f));
-    float outerCutOff = glm::cos(glm::radians(50.0f));
+    float outerCutOff = glm::cos(glm::radians(55.0f));
 
     float constant = 1.0;
     float linear = 0.045;

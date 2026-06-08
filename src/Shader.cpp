@@ -7,6 +7,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <glm/gtc/type_ptr.hpp>
+#include <fmt/core.h>
 
 Shader::Shader(
     const std::string &vertexPath,
@@ -135,21 +136,22 @@ void Shader::setPointLight(const PointLight pointLight) const
     setFloat("pointLight.quadratic", pointLight.quadratic);
 }
 
-void Shader::setSpotLight(const SpotLight spotLight) const
+void Shader::setSpotLight(const SpotLight spotLight, const int index) const
 {
-    setVec3("spotLight.position", spotLight.position);
-    setVec3("spotLight.direction", spotLight.direction);
 
-    setFloat("spotLight.cutOff", spotLight.cutOff);
-    setFloat("spotLight.outerCutOff", spotLight.outerCutOff);
+    setVec3(fmt::format("spotLight[{}].position", index), spotLight.position);
+    setVec3(fmt::format("spotLight[{}].direction", index), spotLight.direction);
 
-    setFloat("spotLight.constant", spotLight.constant);
-    setFloat("spotLight.linear", spotLight.linear);
-    setFloat("spotLight.quadratic", spotLight.quadratic);
+    setFloat(fmt::format("spotLight[{}].cutOff", index), spotLight.cutOff);
+    setFloat(fmt::format("spotLight[{}].outerCutOff", index), spotLight.outerCutOff);
 
-    setVec3("spotLight.ambient", spotLight.ambient);
-    setVec3("spotLight.diffuse", spotLight.diffuse);
-    setVec3("spotLight.specular", spotLight.specular);
+    setFloat(fmt::format("spotLight[{}].constant", index), spotLight.constant);
+    setFloat(fmt::format("spotLight[{}].linear", index), spotLight.linear);
+    setFloat(fmt::format("spotLight[{}].quadratic", index), spotLight.quadratic);
+
+    setVec3(fmt::format("spotLight[{}].ambient", index), spotLight.ambient);
+    setVec3(fmt::format("spotLight[{}].diffuse", index), spotLight.diffuse);
+    setVec3(fmt::format("spotLight[{}].specular", index), spotLight.specular);
 }
 
 void Shader::setDiffuseMap(const Texture &texture) const

@@ -12,7 +12,7 @@ SRC := \
 	src/Texture.cpp \
 	src/CubeMap.cpp
 
-LIBS := -lglfw -lGLEW -lGL
+LIBS := -lglfw -lGLEW -lGL -lfmt
 
 all:
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) $(LIBS)
