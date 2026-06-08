@@ -13,6 +13,7 @@ public:
     ~Shape();
 
     void draw() const;
+    void draw(const Shader&, const glm::mat4) const;
 
 
 private:

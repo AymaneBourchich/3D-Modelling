@@ -7,17 +7,17 @@
 
 enum class LightName
 {
-    SUN_NOON,
-    SUNSET,
-    SUNRISE,
-    OVERCAST_DAY,
-    INDOOR_TUNGSTEN,
-    COOL_LED,
-    NEON_BLUE,
-    CANDLE,
-    NIGHT_MOON,
-    STUDIO_WHITE,
-    RED_MOON
+  SUN_NOON,
+  SUNSET,
+  SUNRISE,
+  OVERCAST_DAY,
+  INDOOR_TUNGSTEN,
+  COOL_LED,
+  NEON_BLUE,
+  CANDLE,
+  NIGHT_MOON,
+  STUDIO_WHITE,
+  RED_MOON
 };
 
 std::map<LightName, Light> lights = {
@@ -58,16 +58,16 @@ std::map<LightName, Light> lights = {
       glm::vec3(0.15f, 0.18f, 0.25f),
       glm::vec3(0.30f, 0.30f, 0.35f)}},
     {LightName::STUDIO_WHITE,
-     {glm::vec3(0.00f, 0.00f, 0.00f),
-      glm::vec3(0.00f, 0.50f, 0.50f),
+     {glm::vec3(0.01f, 0.01f, 0.01f),
+      glm::vec3(0.50f, 0.15f, 0.50f),
       glm::vec3(0.20f, 0.20f, 0.20f)}},
     {LightName::RED_MOON,
-     {glm::vec3(0.02f, 0.001f, 0.001f),
-      glm::vec3(0.2f, 0.02f, 0.02f),
-      glm::vec3(0.2f, 0.2f, 0.2f)}}};
+     {glm::vec3(0.002f, 0.001f, 0.001f),
+      glm::vec3(0.002f, 0.002f, 0.002f),
+      glm::vec3(0.002f, 0.002f, 0.002f)}}};
 
 const glm::vec3 POSITIONS[7] = {
-    glm::vec3(-1, 1, -1),
+    glm::vec3(-4, 1, -1),
     glm::vec3(-4, 1, -1),
     glm::vec3(-2, 1, 1),
     glm::vec3(-1.5, 1, 2),
@@ -77,5 +77,5 @@ const glm::vec3 POSITIONS[7] = {
 
 };
 DirLight DEFAULT_DIR = DirLight(glm::vec3(0.0f, -1.0f, 0.0f), lights[LightName::RED_MOON]);
-PointLight DEFAULT_POINT = PointLight(glm::vec3(0.0f, 1.0f, 0.0f), lights[LightName::STUDIO_WHITE]);
-SpotLight DEFAULT_SPOT = SpotLight(glm::vec3(-5.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), lights[LightName::STUDIO_WHITE]);
+PointLight DEFAULT_POINT = PointLight(glm::vec3(0.1f, 6.9f, -0.1f), lights[LightName::STUDIO_WHITE]);
+SpotLight DEFAULT_SPOT = SpotLight(glm::vec3(-5.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), lights[LightName::CANDLE]);

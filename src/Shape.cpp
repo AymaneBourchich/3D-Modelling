@@ -43,3 +43,10 @@ void Shape::draw() const
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
+
+void Shape::draw(const Shader &shader, const glm::mat4 model) const
+{
+    shader.setModel(model);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+}
