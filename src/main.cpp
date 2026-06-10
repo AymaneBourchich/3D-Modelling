@@ -92,6 +92,9 @@ int main()
         cube.draw();
         glDepthMask(GL_TRUE);
 
+        lightShader.setInt("NB_SPOT", 1);
+        lightShader.setSpotLight(DEFAULT_SPOT, 0);
+
         //-----------------------------------------//
         glm::mat4 translate, rotate, scale = IDENTITY;
         //--------------------------------------------//
@@ -104,9 +107,10 @@ int main()
 
         lightShader.setDirLight(DEFAULT_DIR);
 
+        translate = glm::translate(IDENTITY, glm::vec3(0, -0.5, 0));
         scale = glm::scale(glm::mat4(1.0f), glm::vec3(30.0f));
         rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        lightShader.setMVP(rotate * scale, VIEW, PROJ);
+        lightShader.setMVP(translate * rotate * scale, VIEW, PROJ);
         quad.draw();
 
         //----------------------------//
@@ -114,14 +118,20 @@ int main()
         lightShader.setSpecularMap(metalTexture);
         lightShader.setPointLight(DEFAULT_POINT);
 
-        lightShader.setInt("NB_SPOT", 1);
-        lightShader.setSpotLight(DEFAULT_SPOT, 0);
+
+        glm::mat4 restorePivot = glm::translate(IDENTITY, glm::vec3(0, quad.minY(), 0));
+        scale = glm::scale(IDENTITY, glm::vec3(1, 2, 1));
+        glm::mat4 movePivot = glm::translate(IDENTITY, -glm::vec3(0, quad.minY(), 0));
+
+        //quad.draw(lightShader, restorePivot * scale * movePivot);
+
+        restorePivot = glm::translate(IDENTITY, quad.bottomLeft());
+        rotate = glm::rotate(IDENTITY, sinf(VAR), Z_AXIS);
+        movePivot = glm::translate(IDENTITY, -quad.bottomLeft());
+
+        quad.draw(lightShader, restorePivot * rotate * movePivot);
 
         //------------------------------------------------------//
-
-
-        materialShader.setMaterial(materials[MaterialName::OBSIDIAN]);
-        translate = glm::translate(IDENTITY, DEFAULT_SPOT.position - glm::vec3(0, 6, 0));
 
 
         glfwSwapBuffers(globalWindow);
@@ -156,14 +166,14 @@ static void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 }
 
-//int n = 10;
-        // float stepAngle = glm::two_pi<float>() / n;
+// int n = 10;
+//  float stepAngle = glm::two_pi<float>() / n;
 
-        // for (int i = 0; i < n; i++)
-        // {
-        //     glm::mat4 setHorizontal = glm::rotate(IDENTITY, glm::radians(90.0f), X_AXIS);
-        //     rotate = glm::rotate(IDENTITY, stepAngle * i, Z_AXIS);
-        //     glm::mat4 selfRotate = glm::rotate(IDENTITY, VAR, Z_AXIS);
-        //     materialShader.setModel(translate * setHorizontal * rotate * selfRotate);
-        //     quad.draw();
-        // }
+// for (int i = 0; i < n; i++)
+// {
+//     glm::mat4 setHorizontal = glm::rotate(IDENTITY, glm::radians(90.0f), X_AXIS);
+//     rotate = glm::rotate(IDENTITY, stepAngle * i, Z_AXIS);
+//     glm::mat4 selfRotate = glm::rotate(IDENTITY, VAR, Z_AXIS);
+//     materialShader.setModel(translate * setHorizontal * rotate * selfRotate);
+//     quad.draw();
+// }

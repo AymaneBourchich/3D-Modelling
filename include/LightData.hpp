@@ -62,7 +62,7 @@ std::map<LightName, Light> lights = {
       glm::vec3(0.50f, 0.15f, 0.50f),
       glm::vec3(0.20f, 0.20f, 0.20f)}},
     {LightName::RED_MOON,
-     {glm::vec3(0.002f, 0.001f, 0.001f),
+     {glm::vec3(0.3f, 0.3f, 0.3f),
       glm::vec3(0.002f, 0.002f, 0.002f),
       glm::vec3(0.002f, 0.002f, 0.002f)}}};
 
@@ -77,5 +77,6 @@ const glm::vec3 POSITIONS[7] = {
 
 };
 DirLight DEFAULT_DIR = DirLight(glm::vec3(0.0f, -1.0f, 0.0f), lights[LightName::RED_MOON]);
+
 PointLight DEFAULT_POINT = PointLight(glm::vec3(0.1f, 6.9f, -0.1f), lights[LightName::STUDIO_WHITE]);
 SpotLight DEFAULT_SPOT = SpotLight(glm::vec3(-5.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), lights[LightName::CANDLE]);

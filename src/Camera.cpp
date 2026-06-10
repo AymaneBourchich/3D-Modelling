@@ -8,7 +8,7 @@ extern GLFWwindow *globalWindow;
 
 Camera::Camera()
 {
-    position = glm::vec3(0.0f, 2.0f, 3.0f);
+    position = glm::vec3(0.0f, 0.5f, 3.0f);
 
     worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 

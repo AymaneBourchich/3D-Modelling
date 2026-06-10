@@ -13,26 +13,31 @@ public:
     ~Shape();
 
     void draw() const;
-    void draw(const Shader &, const glm::mat4) const;
+    void draw(const Shader &, const glm::mat4);
+
+    float minX();
+    float minY();
+    float minZ();
 
     glm::vec3 topLeft();
     glm::vec3 topRight();
     glm::vec3 bottomLeft();
     glm::vec3 bottomRight();
 
-private:
-    void updatePoints(const glm::mat4 model);
-    float minX();
-    float minY();
-    float minZ();
-
     float maxX();
     float maxY();
     float maxZ();
+
+private:
+    void updatePoints(const glm::mat4 model);
+    
+
+    
 
     
 
     unsigned int vao, vbo, ebo;
     unsigned int indexCount;
+    std::vector<glm::vec3> originalPoints;
     std::vector<glm::vec3> points;
 };
