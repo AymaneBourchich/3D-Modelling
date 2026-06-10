@@ -104,7 +104,7 @@ int main()
 
         lightShader.setDirLight(DEFAULT_DIR);
 
-        scale = glm::scale(glm::mat4(1.0f), glm::vec3(300.0f));
+        scale = glm::scale(glm::mat4(1.0f), glm::vec3(30.0f));
         rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         lightShader.setMVP(rotate * scale, VIEW, PROJ);
         quad.draw();
@@ -112,57 +112,17 @@ int main()
         //----------------------------//
         lightShader.setDiffuseMap(metalTexture);
         lightShader.setSpecularMap(metalTexture);
-
-        glm::mat4 center = glm::translate(IDENTITY, glm::vec3(0.5, 0.5, 0));
-        scale = glm::scale(IDENTITY, glm::vec3(15, 7, 1));
-        quad.draw(lightShader, scale * center);
-
-        rotate = glm::rotate(IDENTITY, glm::radians(90.0f), Y_AXIS);
-        quad.draw(lightShader, rotate * scale * center);
-
-        translate = glm::translate(IDENTITY, glm::vec3(15, 0, 0));
-        quad.draw(lightShader, translate * rotate * scale * center);
-
-        translate = glm::translate(IDENTITY, glm::vec3(0, 0, -15));
-        quad.draw(lightShader, translate * scale * center);
-
-        scale = glm::scale(IDENTITY, glm::vec3(15, 15, 1));
-        rotate = glm::rotate(IDENTITY, glm::radians(90.0f), X_AXIS);
-        translate = glm::translate(IDENTITY, glm::vec3(0, 7, -15));
-
-        quad.draw(lightShader, translate * rotate * scale * center);
-
-        DEFAULT_SPOT.position = DEFAULT_POINT.position + glm::vec3(7.5, 0.0, -7.5);
         lightShader.setPointLight(DEFAULT_POINT);
 
+        lightShader.setInt("NB_SPOT", 1);
         lightShader.setSpotLight(DEFAULT_SPOT, 0);
 
         //------------------------------------------------------//
-        DEFAULT_POINT.linear = 0.0045;
-        DEFAULT_POINT.quadratic = 0.00075;
 
-        materialShader.use();
-        materialShader.setMaterial(materials[MaterialName::BRONZE]);
-        materialShader.setMVP(glm::translate(IDENTITY, DEFAULT_POINT.position), VIEW, PROJ);
-        cube.draw();
-
-        materialShader.setMVP(glm::translate(IDENTITY, DEFAULT_POINT.position + glm::vec3(7.5, 0.0, -7.5)), VIEW, PROJ);
-        cube.draw();
 
         materialShader.setMaterial(materials[MaterialName::OBSIDIAN]);
         translate = glm::translate(IDENTITY, DEFAULT_SPOT.position - glm::vec3(0, 6, 0));
 
-        int n = 10;
-        float stepAngle = glm::two_pi<float>() / n;
-
-        for (int i = 0; i < n; i++)
-        {
-            glm::mat4 setHorizontal = glm::rotate(IDENTITY, glm::radians(90.0f), X_AXIS);
-            rotate = glm::rotate(IDENTITY, stepAngle * i, Z_AXIS);
-            glm::mat4 selfRotate = glm::rotate(IDENTITY, VAR, Z_AXIS);
-            materialShader.setModel(translate * setHorizontal * rotate * selfRotate);
-            quad.draw();
-        }
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();
@@ -195,3 +155,15 @@ static void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
+
+//int n = 10;
+        // float stepAngle = glm::two_pi<float>() / n;
+
+        // for (int i = 0; i < n; i++)
+        // {
+        //     glm::mat4 setHorizontal = glm::rotate(IDENTITY, glm::radians(90.0f), X_AXIS);
+        //     rotate = glm::rotate(IDENTITY, stepAngle * i, Z_AXIS);
+        //     glm::mat4 selfRotate = glm::rotate(IDENTITY, VAR, Z_AXIS);
+        //     materialShader.setModel(translate * setHorizontal * rotate * selfRotate);
+        //     quad.draw();
+        // }

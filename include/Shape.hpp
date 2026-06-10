@@ -4,21 +4,35 @@
 
 #include "Shader.hpp"
 #include "Vertex.hpp"
-
+#include <vector>
 class Shape
 {
 public:
-    Shape(const Vertex* vertices, unsigned int vertexSize, const unsigned int *indices, unsigned int indexSize);
+    Shape(Vertex *vertices, unsigned int vertexSize, const unsigned int *indices, unsigned int indexSize);
 
     ~Shape();
 
     void draw() const;
-    void draw(const Shader&, const glm::mat4) const;
+    void draw(const Shader &, const glm::mat4) const;
 
+    glm::vec3 topLeft();
+    glm::vec3 topRight();
+    glm::vec3 bottomLeft();
+    glm::vec3 bottomRight();
 
 private:
+    void updatePoints(const glm::mat4 model);
+    float minX();
+    float minY();
+    float minZ();
+
+    float maxX();
+    float maxY();
+    float maxZ();
+
+    
+
     unsigned int vao, vbo, ebo;
     unsigned int indexCount;
-    
+    std::vector<glm::vec3> points;
 };
-
