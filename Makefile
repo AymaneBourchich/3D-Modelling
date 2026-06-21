@@ -8,8 +8,6 @@ SRC := \
 	src/main.cpp \
 	src/Shader.cpp \
 	src/Camera.cpp \
-	src/Shape.cpp \
-	src/Texture.cpp \
 	src/CubeMap.cpp \
 	src/Mesh.cpp \
 	src/Model.cpp

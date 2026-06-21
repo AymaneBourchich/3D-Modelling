@@ -79,6 +79,7 @@ int main()
         modelShader.use();
         
         modelShader.setMVP(glm::mat4(1.0f), VIEW, PROJ);
+        modelShader.setModel(glm::rotate(glm::mat4(1.0f), VAR, glm::vec3(0, 1, 0)));
         model.Draw(modelShader);
         //------------------------------------------------------//
 

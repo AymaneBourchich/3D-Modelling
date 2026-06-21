@@ -50,9 +50,6 @@ void Mesh::Draw(Shader &shader)
             number = std::to_string(specularNr++);
 
         std::string uniformName = name + number;
-        // int loc = glGetUniformLocation(shader.shaderProgramId, uniformName.c_str());
-        // std::cout << "Setting " << uniformName << " -> unit " << i
-        //            << " (uniform location: " << loc << ", texID: " << textures[i].id << ")" << std::endl;
 
         shader.setInt(uniformName.c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
