@@ -6,7 +6,8 @@
 #include "Shader.hpp"
 #include <vector>
 #include <iostream>
-#include "stb_image.h"
+
+
 #include <string>
 class Model
 {

@@ -34,7 +34,16 @@ int main()
     globalWindow = glfwCreateWindow(mode->width, mode->height, "FPS Camera", primaryMonitor, nullptr);
     glfwMakeContextCurrent(globalWindow);
     glewExperimental = GL_TRUE;
-    glewInit();
+
+    if (glewInit() != GLEW_OK)
+    {
+        std::cout << "CRITICAL: GLEW failed to initialize!" << std::endl;
+        return -1;
+    }
+
+    // Ensure the GL version is actually 3.3
+    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+    glewExperimental = GL_TRUE;
     glViewport(0, 0, mode->width, mode->height);
 
     glEnable(GL_DEPTH_TEST);
@@ -42,11 +51,9 @@ int main()
     Camera camera;
     globalCamera = &camera;
 
-    stbi_set_flip_vertically_on_load(true);
     glEnable(GL_DEPTH_TEST);
     Shader modelShader("shaders/model.vert", "shaders/model.frag");
     Model model("backpack/backpack.obj");
-
 
     glfwSetCursorPosCallback(globalWindow, mouseCallback);
     glfwSetInputMode(globalWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -70,6 +77,7 @@ int main()
 
         //-----------------------------------------//
         modelShader.use();
+        
         modelShader.setMVP(glm::mat4(1.0f), VIEW, PROJ);
         model.Draw(modelShader);
         //------------------------------------------------------//

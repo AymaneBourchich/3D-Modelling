@@ -37,9 +37,10 @@ public:
     void setFloat(const std::string &name, float value) const;
 
     unsigned int getId() const;
+    unsigned int shaderProgramId;
 
 private:
-    unsigned int shaderProgramId;
+    
 
     std::string readFile(const std::string &filePath);
 

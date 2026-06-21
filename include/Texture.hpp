@@ -1,16 +1,16 @@
-#pragma once
+// #pragma once
 
-#include <string>
+// #include <string>
 
-class Texture
-{
-public:
-    Texture(const std::string& filePath);
+// class Texture
+// {
+// public:
+//     Texture(const std::string& filePath);
 
-    ~Texture();
+//     ~Texture();
 
-    void bind(int slot) const;
+//     void bind(int slot) const;
 
-private:
-    unsigned int textureId;
-};
+// private:
+//     unsigned int textureId;
+// };

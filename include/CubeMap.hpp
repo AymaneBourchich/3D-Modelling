@@ -1,17 +1,17 @@
-#pragma once
+// #pragma once
 
-#include <string>
-#include <array>
+// #include <string>
+// #include <array>
 
-class CubeMap
-{
-public:
-    CubeMap(const std::array<std::string, 6> faces);
+// class CubeMap
+// {
+// public:
+//     CubeMap(const std::array<std::string, 6> faces);
 
-    ~CubeMap();
+//     ~CubeMap();
 
-    void bind() const;
+//     void bind() const;
 
-private:
-    unsigned int textureId;
-};
+// private:
+//     unsigned int textureId;
+// };
