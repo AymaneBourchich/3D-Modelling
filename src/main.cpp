@@ -2,7 +2,6 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -11,8 +10,8 @@
 #include "Camera.hpp"
 #include "Shader.hpp"
 #include "CubeMap.hpp"
-#include "Light.hpp"
-#include "MaterialData.hpp"
+#include "Model.hpp"
+
 #include <math.h>
 
 std::array<std::string, 6> getCubemap(std::string folderName);
@@ -43,13 +42,10 @@ int main()
     Camera camera;
     globalCamera = &camera;
 
-    Shader basicShader("shaders/basic.vert", "shaders/basic.frag");
-    Shader texShader("shaders/texture.vert", "shaders/texture.frag");
-    Shader skyBoxShader("shaders/cubemap.vert", "shaders/cubemap.frag");
-    Shader lightShader("shaders/light.vert", "shaders/light.frag");
-    Shader materialShader("shaders/material.vert", "shaders/material.frag");
-
-    CubeMap cubeMap(getCubemap("redNebula/1"));
+    stbi_set_flip_vertically_on_load(true);
+    glEnable(GL_DEPTH_TEST);
+    Shader modelShader("shaders/model.vert", "shaders/model.frag");
+    Model model("backpack/backpack.obj");
 
 
     glfwSetCursorPosCallback(globalWindow, mouseCallback);
@@ -73,8 +69,9 @@ int main()
         glm::mat4 PROJ = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
         //-----------------------------------------//
-        
-        
+        modelShader.use();
+        modelShader.setMVP(glm::mat4(1.0f), VIEW, PROJ);
+        model.Draw(modelShader);
         //------------------------------------------------------//
 
         glfwSwapBuffers(globalWindow);

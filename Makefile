@@ -10,9 +10,11 @@ SRC := \
 	src/Camera.cpp \
 	src/Shape.cpp \
 	src/Texture.cpp \
-	src/CubeMap.cpp
+	src/CubeMap.cpp \
+	src/Mesh.cpp \
+	src/Model.cpp
 
-LIBS := -lglfw -lGLEW -lGL -lfmt
+LIBS := -lglfw -lGLEW -lGL -lfmt -lassimp
 
 all:
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) $(LIBS)
