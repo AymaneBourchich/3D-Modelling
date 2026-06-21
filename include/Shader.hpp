@@ -3,12 +3,12 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "Light.hpp"
-#include "Texture.hpp"
 
 class Shader
 {
 public:
     Shader(const std::string &vertexPath, const std::string &fragmentPath);
+    Shader();
 
     ~Shader();
 

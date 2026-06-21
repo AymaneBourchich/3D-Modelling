@@ -28,16 +28,14 @@ public:
     float maxY();
     float maxZ();
 
+    void resetPoints();
+    std::vector<glm::vec3> points;
+
 private:
     void updatePoints(const glm::mat4 model);
-    
-
-    
-
-    
-
+    std::vector<glm::vec3> getPoints();
     unsigned int vao, vbo, ebo;
     unsigned int indexCount;
     std::vector<glm::vec3> originalPoints;
-    std::vector<glm::vec3> points;
+    
 };

@@ -5,17 +5,14 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <iostream>
 #include "Camera.hpp"
 #include "Shader.hpp"
-#include "Shape.hpp"
-#include "GeometryData.hpp"
 #include "CubeMap.hpp"
 #include "Light.hpp"
-#include "models.hpp"
 #include "MaterialData.hpp"
-#include "LightData.hpp"
 #include <math.h>
 
 std::array<std::string, 6> getCubemap(std::string folderName);
@@ -52,17 +49,8 @@ int main()
     Shader lightShader("shaders/light.vert", "shaders/light.frag");
     Shader materialShader("shaders/material.vert", "shaders/material.frag");
 
-    Texture diffuseRockMap("textures/rock.jpg");
-    Texture specularRockMap("textures/rock_spec.jpg");
-    Texture metalTexture("textures/metal.jpg");
-    Texture bloodTexture("textures/splatter.jpg");
-    Texture wallTexture("textures/wall.jpg");
-
     CubeMap cubeMap(getCubemap("redNebula/1"));
 
-    Shape triangle(Triangle::VERTICES, Triangle::VERTEX_COUNT, Triangle::INDICES, Triangle::INDEX_COUNT);
-    Shape quad(Quad::VERTICES, Quad::VERTEX_COUNT, Quad::INDICES, Quad::INDEX_COUNT);
-    Shape cube(Cube::VERTICES, Cube::VERTEX_COUNT, Cube::INDICES, Cube::INDEX_COUNT);
 
     glfwSetCursorPosCallback(globalWindow, mouseCallback);
     glfwSetInputMode(globalWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -85,54 +73,9 @@ int main()
         glm::mat4 PROJ = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
         //-----------------------------------------//
-        skyBoxShader.use();
-        glDepthMask(GL_FALSE);
-        skyBoxShader.setMVP(IDENTITY, glm::mat4(glm::mat3(VIEW)), PROJ);
-        cubeMap.bind();
-        cube.draw();
-        glDepthMask(GL_TRUE);
-
-        lightShader.setInt("NB_SPOT", 1);
-        lightShader.setSpotLight(DEFAULT_SPOT, 0);
-
-        //-----------------------------------------//
-        glm::mat4 translate, rotate, scale = IDENTITY;
-        //--------------------------------------------//
-        lightShader.use();
-        lightShader.setVec3("viewPos", camera.position);
-
-        lightShader.setDiffuseMap(diffuseRockMap);
-        lightShader.setSpecularMap(specularRockMap);
-        lightShader.setFloat("material.shininess", 8.0f);
-
-        lightShader.setDirLight(DEFAULT_DIR);
-
-        translate = glm::translate(IDENTITY, glm::vec3(0, -0.5, 0));
-        scale = glm::scale(glm::mat4(1.0f), glm::vec3(30.0f));
-        rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        lightShader.setMVP(translate * rotate * scale, VIEW, PROJ);
-        quad.draw();
-
-        //----------------------------//
-        lightShader.setDiffuseMap(metalTexture);
-        lightShader.setSpecularMap(metalTexture);
-        lightShader.setPointLight(DEFAULT_POINT);
-
-
-        glm::mat4 restorePivot = glm::translate(IDENTITY, glm::vec3(0, quad.minY(), 0));
-        scale = glm::scale(IDENTITY, glm::vec3(1, 2, 1));
-        glm::mat4 movePivot = glm::translate(IDENTITY, -glm::vec3(0, quad.minY(), 0));
-
-        //quad.draw(lightShader, restorePivot * scale * movePivot);
-
-        restorePivot = glm::translate(IDENTITY, quad.bottomLeft());
-        rotate = glm::rotate(IDENTITY, sinf(VAR), Z_AXIS);
-        movePivot = glm::translate(IDENTITY, -quad.bottomLeft());
-
-        quad.draw(lightShader, restorePivot * rotate * movePivot);
-
+        
+        
         //------------------------------------------------------//
-
 
         glfwSwapBuffers(globalWindow);
         glfwPollEvents();

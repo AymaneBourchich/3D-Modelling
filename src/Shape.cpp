@@ -55,14 +55,13 @@ void Shape::draw(const Shader &shader, const glm::mat4 model)
     shader.setModel(model);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-    //updatePoints(model);
+    updatePoints(model);
 }
 
-void Shape::updatePoints(const glm::mat4 model)
+void Shape::updatePoints(glm::mat4 model)
 {
-    for (size_t i = 0; i < originalPoints.size(); ++i) {
-            points[i] = glm::vec3(model * glm::vec4(originalPoints[i], 1.0f));
-        }
+    std::for_each(points.begin(), points.end(), [model](glm::vec3 &point)
+                  { point = glm::vec3(model * glm::vec4(point, 1.0f)); });
 }
 
 float Shape::minX()
@@ -115,9 +114,8 @@ glm::vec3 Shape::bottomLeft()
 {
     float minX = this->minX();
     float minY = this->minY();
-    auto bottomLeft = std::find_if(points.begin(), points.end(), [minX, minY](glm::vec3 point) {
-        return point.x == minX && point.y == minY;
-    });
+    auto bottomLeft = std::find_if(points.begin(), points.end(), [minX, minY](glm::vec3 point)
+                                   { return point.x == minX && point.y == minY; });
 
     return *bottomLeft;
 }
@@ -126,9 +124,8 @@ glm::vec3 Shape::bottomRight()
 {
     float maxX = this->maxX();
     float minY = this->minY();
-    auto bottomRight = std::find_if(points.begin(), points.end(), [maxX, minY](glm::vec3 point) {
-        return point.x == maxX && point.y == minY;
-    });
+    auto bottomRight = std::find_if(points.begin(), points.end(), [maxX, minY](glm::vec3 point)
+                                    { return point.x == maxX && point.y == minY; });
 
     return *bottomRight;
 }
@@ -137,9 +134,8 @@ glm::vec3 Shape::topLeft()
 {
     float minX = this->minX();
     float maxY = this->maxY();
-    auto topLeft = std::find_if(points.begin(), points.end(), [minX, maxY](glm::vec3 point) {
-        return point.x == minX && point.y == maxY;
-    });
+    auto topLeft = std::find_if(points.begin(), points.end(), [minX, maxY](glm::vec3 point)
+                                { return point.x == minX && point.y == maxY; });
 
     return *topLeft;
 }
@@ -148,9 +144,14 @@ glm::vec3 Shape::topRight()
 {
     float minX = this->minX();
     float maxY = this->maxY();
-    auto topRight = std::find_if(points.begin(), points.end(), [minX, maxY](glm::vec3 point) {
-        return point.x == minX && point.y == maxY;
-    });
+    auto topRight = std::find_if(points.begin(), points.end(), [minX, maxY](glm::vec3 point)
+                                 { return point.x == minX && point.y == maxY; });
 
     return *topRight;
+}
+
+void Shape::resetPoints()
+{
+    for (size_t i = 0; i < points.size(); i++)
+        points[i] = originalPoints[i];
 }

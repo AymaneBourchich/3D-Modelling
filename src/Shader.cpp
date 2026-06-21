@@ -49,6 +49,11 @@ Shader::Shader(
     glDeleteShader(fragmentShader);
 }
 
+Shader::Shader()
+{
+    Shader("shaders/basic.vert", "shaders/basic.frag");
+}
+
 Shader::~Shader()
 {
     glDeleteProgram(shaderProgramId);
@@ -154,17 +159,17 @@ void Shader::setSpotLight(const SpotLight spotLight, const int index) const
     setVec3(fmt::format("spotLight[{}].specular", index), spotLight.specular);
 }
 
-void Shader::setDiffuseMap(const Texture &texture) const
-{
-    setInt("material.diffuse", 0);
-    texture.bind(0);
-}
+// void Shader::setDiffuseMap(const Texture &texture) const
+// {
+//     setInt("material.diffuse", 0);
+//     texture.bind(0);
+// }
 
-void Shader::setSpecularMap(const Texture &texture) const
-{
-    setInt("material.specular", 1);
-    texture.bind(1);
-}
+// void Shader::setSpecularMap(const Texture &texture) const
+// {
+//     setInt("material.specular", 1);
+//     texture.bind(1);
+// }
 
 void Shader::setFloat(const std::string &name, float value) const
 {
