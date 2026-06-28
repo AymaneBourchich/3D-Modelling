@@ -11,8 +11,3 @@ struct Vertex
     glm::vec2 texCoord = glm::vec2(0.0f);
 };
 
-struct Texture {
-    unsigned int id;
-    std::string type;
-    std::string path;
-};  

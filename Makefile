@@ -10,7 +10,8 @@ SRC := \
 	src/Camera.cpp \
 	src/CubeMap.cpp \
 	src/Mesh.cpp \
-	src/Model.cpp
+	src/Model.cpp \
+	src/Texture.cpp
 
 LIBS := -lglfw -lGLEW -lGL -lfmt -lassimp
 

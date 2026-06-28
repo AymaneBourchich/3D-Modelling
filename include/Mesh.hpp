@@ -2,6 +2,7 @@
 #include <vector>
 #include "Vertex.hpp"
 #include "Shader.hpp"
+#include "Texture.hpp"
 class Mesh {
     public:
         // mesh data

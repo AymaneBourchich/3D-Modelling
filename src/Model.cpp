@@ -2,11 +2,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma)
+unsigned int TextureFromFile(const std::string path, const std::string directory)
 {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
-
+    std::cout << filename + "------------" << std::endl;
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
@@ -31,8 +31,7 @@ unsigned int TextureFromFile(const char *path, const std::string &directory, boo
         GLenum err = glGetError();
         if (err != GL_NO_ERROR)
             std::cout << "glTexImage2D error: 0x" << std::hex << err << std::dec << std::endl;
-        else
-            std::cout << "glTexImage2D OK for " << filename << std::endl;
+
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // avoid row-padding issues on RGB textures
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -44,9 +43,6 @@ unsigned int TextureFromFile(const char *path, const std::string &directory, boo
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_image_free(data);
-
-        std::cout << "Loaded texture: " << filename << " (" << width << "x" << height
-                  << ", " << nrComponents << " components)" << std::endl;
     }
     else
     {
@@ -176,7 +172,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         if (!skip)
         {
             Texture texture;
-            texture.id = TextureFromFile(str.C_Str(), this->directory, false);
+            texture.id = TextureFromFile(str.C_Str(), this->directory);
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
