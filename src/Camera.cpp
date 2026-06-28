@@ -1,8 +1,8 @@
 #include "Camera.hpp"
 
-#include <GLFW/glfw3.h>
 
-#include <glm/gtc/matrix_transform.hpp>
+
+
 
 extern GLFWwindow *globalWindow;
 

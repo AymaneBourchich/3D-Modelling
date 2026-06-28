@@ -1,18 +1,9 @@
 // main.cpp
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/string_cast.hpp>
-
-#include <iostream>
 #include "Camera.hpp"
-#include "Shader.hpp"
-#include "CubeMap.hpp"
 #include "Model.hpp"
-
-#include <math.h>
+#include <glm/gtx/string_cast.hpp>
 
 std::array<std::string, 6> getCubemap(std::string folderName);
 static void mouseCallback([[maybe_unused]] GLFWwindow *window, double mouseX, double mouseY);

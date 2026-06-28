@@ -3,8 +3,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "Mesh.hpp"
-#include "Shader.hpp"
-#include <vector>
 #include <iostream>
 
 

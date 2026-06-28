@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
 #include "Light.hpp"
+#include <GL/glew.h>
 
 class Shader
 {
