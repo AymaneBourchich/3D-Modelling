@@ -1,4 +1,5 @@
 #include "Model.hpp"
+#include <iostream>
 
 
 void Model::Draw(Shader &shader)

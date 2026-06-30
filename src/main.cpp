@@ -1,9 +1,14 @@
 // main.cpp
 
-#include <GL/glew.h>
 #include "Camera.hpp"
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <GLFW/glfw3.h>
+#include <iostream>
 #include "Model.hpp"
 #include <glm/gtx/string_cast.hpp>
+#include "geometryData.hpp"
 
 std::array<std::string, 6> getCubemap(std::string folderName);
 static void mouseCallback([[maybe_unused]] GLFWwindow *window, double mouseX, double mouseY);
@@ -34,7 +39,6 @@ int main()
 
     glViewport(0, 0, mode->width, mode->height);
 
-
     glfwSetCursorPosCallback(globalWindow, mouseCallback);
     glfwSetInputMode(globalWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glEnable(GL_DEPTH_TEST);
@@ -43,6 +47,11 @@ int main()
     Shader modelShader("shaders/model.vert", "shaders/model.frag");
     Model model("backpack/backpack.obj");
     Camera camera;
+    std::vector<Texture> triTex = {
+        Texture("box.jpg", "textures", "texture_diffuse"),
+        Texture("boxSpec.jpg", "textures", "texture_specular"),
+    };
+    Mesh triangle = Mesh(triVertices, triIndices, triTex);
     globalCamera = &camera;
     while (!glfwWindowShouldClose(globalWindow))
     {
@@ -63,7 +72,7 @@ int main()
 
         modelShader.setMVP(glm::mat4(1.0f), VIEW_MATRIX, PROJ_MATRIX);
         modelShader.setModel(glm::rotate(glm::mat4(1.0f), currentTime, glm::vec3(0, 1, 0)));
-        model.Draw(modelShader);
+        triangle.Draw(modelShader);
         //------------------------------------------------------//
 
         glfwSwapBuffers(globalWindow);
@@ -97,4 +106,3 @@ static void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
-

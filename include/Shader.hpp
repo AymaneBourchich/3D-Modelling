@@ -2,7 +2,6 @@
 
 #include <string>
 #include "Light.hpp"
-#include <GL/glew.h>
 
 class Shader
 {

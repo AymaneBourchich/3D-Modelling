@@ -4,6 +4,20 @@
 #include <GL/glew.h>
 #include <iostream>
 
+Texture::Texture()
+{
+}
+
+Texture::Texture(const std::string path, const std::string directory, const std::string type) : path(path), type(type)
+{
+    this->id = this->loadFromFile(path, directory);
+}
+
+void Texture::bind()
+{
+    glBindTexture(GL_TEXTURE_2D, this->id);
+}
+
 unsigned int Texture::loadFromFile(const std::string path, const std::string directory)
 {
     std::string filename = std::string(path);
@@ -34,7 +48,6 @@ unsigned int Texture::loadFromFile(const std::string path, const std::string dir
         if (err != GL_NO_ERROR)
             std::cout << "glTexImage2D error: 0x" << std::hex << err << std::dec << std::endl;
 
-
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // avoid row-padding issues on RGB textures
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -53,5 +66,4 @@ unsigned int Texture::loadFromFile(const std::string path, const std::string dir
     }
 
     return textureID;
-
 }
